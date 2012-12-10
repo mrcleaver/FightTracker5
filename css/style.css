@@ -1,12 +1,83 @@
+ul.columns{
+	margin: 0px 0px 0px 5px; 
+	padding: 0px; 
+}
+
+ul.columns li{
+    text-align: left;
+    float: left;
+    list-style: none;
+}
+
+.one-button-short-wrap{
+	float: left; 
+	width: 50px;
+	height: 50px;  
+}
+
+.two-button-long-wrap{
+	float: left; 
+	width: 100px; 
+	height: 100px; 
+}
 
 
+.control-button{
+	background-color: #E36b23;
+	color: white; 
+	font-size: 12px; 
+	height: 25px; 
+	width: 25px; 
+	text-align: center; 
+	line-height: 25px; 
+	font-face: 'Open Sans';
+	font-weight: bold;
+}
 
+.long-button{
+	width: 100px; 
+}
 
+.number-box{
+	border: 1px solid #E36B23;
+	color: #E36B23; 
+	font-size: 40px; 
+	text-align: center; 
+	font-family: impact; 
+	height: 50px; 
+	width: 50px;
+	text-align: center; 
+	line-height: 50px;  
+	float: left; 
+}
 
+.controls-top-center{
+	width: 100%; 
+	position: fixed; 
+	top: 0px; 
+}
 
+.controls-top{
+	width: 600px; 
+	height: 90px; 
+	top: 0px; 	
+	margin-left: auto; 
+	margin-right: auto; 	
+}
 
+.container{
+	margin-top: 12%; 
+}
 
+.left-column{
+	float: left; 
+	width: 50%; 
+}
 
+.right-column{
+	float: right; 
+	width: 50%; 
+}
 
 .clearfix:after {
      visibility: hidden;
