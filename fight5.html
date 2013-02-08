@@ -6,7 +6,7 @@
 		<script src="lib/bootstrap/css/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+<link href='http://fonts.googleapis.com/css?family=Ubuntu|Open+Sans' rel='stylesheet' type='text/css'>
 
 		<title>FightTracker Version 5</title>
 	</head>
@@ -17,7 +17,7 @@
 				<h4>Turn</h4>
 				<div class="number-box">1</div>
 				<div class="one-button-short-wrap">
-					<ul class="columns">
+					<ul class="turn-button-column">
 						<li><div class="control-button" id="turn-prev"><i class="icon-arrow-left icon-white"></i></div></button></li>
 						<li><div class="control-button" id="turn-next"><i class="icon-arrow-right icon-white"></i></div></button></li>
 					</ul>
@@ -25,16 +25,16 @@
 			</div>
 			
 			<div class="right-column">
-				<div class="two-button-long-wrap">
-				<ul class="columns">
+  				<div class="two-button-long-wrap">
+				<ul class="turn-button-column">
 					<li><div class="control-button long-button" id="undo">Undo</button></li>
 					<li><div class="control-button long-button" id="redo">Redo</button></li>
 					<li><div class="control-button long-button" id="save">Save</button></li>
 					<li><div class="control-button long-button" id="load-battle">Load</button></li>
 				</ul>
-				</div>
+				</div> 
 			</div>
-		</div>
+	</div>
 	</div>
 		<div class="container">
 			<div class="creature" id="entry">
@@ -43,7 +43,6 @@
 				<div class="creature-close">X</div>
 				<div class="creature-left">
 					<strong>HP: </strong><span class="hp-cur">100 </span>/<span class="hp-max"> 120</span><span class="hp-per"> (83%)</span>
-					<input type="number"></input><button class="btn add-hp">+</button><button class="btn sub-hp">-</button>
 				</div>
 				<div class="creature-right">
 					<div class="effects">
@@ -51,18 +50,22 @@
 							<li><span class="label label-important">Bleed</span></li>
 							<li><span class="label label-info">M. Weapon (s)</span>
 						</ul>
-						<input type="text" placeholder="Effect name"></input><div class="colorbox"></div>
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<div class="controls-bottom-center">
 			<fieldset class="controls-bottom clearfix">
 				<legend>Create creature</legend>
 				<input type="text" id="control-creature-name-input" placeholder="Name"></input>
 				<input type="number" id="control-creature-initiative-input" placeholder="Init"></input>
 				<input type="number" id="control-creature-hp-input" placeholder="HP"></input>
-				<button class="btn" id="create">Create</button>
-				<button class="btn" id="save-creature">Save</button>
-				<button class="btn" id="load-creature">Load</button>
+				<div class="control-buttons">
+					<div class="control-button long-button" id="create">Create</div>
+					<div class="control-button long-button" id="save-creature">Save</div>
+					<div class="control-button long-button" id="load-creature">Load</div>
+				</div>
 			</fieldset>
 		</div>
 	</body>
