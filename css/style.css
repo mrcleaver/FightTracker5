@@ -63,72 +63,6 @@ ul.turn-button-column li{
 	background-color: #2A333C;
 }
 
-.controls-bottom-center{
-	width: 100%;
-	border-top: 1px solid #646464;
-	background-color: #2A333C;
-	position: fixed; 
-	bottom: 0px;
-	z-index: 999;
-}
-
-.controls-bottom-center fieldset.controls-bottom{
-	margin-left: auto;
-	margin-right: auto; 
-	width: 800px;
-	text-align: center;
-}
-
-.controls-bottom .control-buttons{
-	margin-left: auto;
-	margin-right: auto; 
-	width: 320px;
-}
-
-.controls-bottom .control-button{
-	float: left;
-	margin: 0px 3px 0px 3px; 
-}
-
-.creature{
-	width: 500px;
-	height: 100px;
-	margin-left: auto;
-	margin-right: auto; 
-	border: 1px solid #646464;
-	font-size: 11px;
-	padding: 5px;
-	font-family: 'Ubuntu', sans-serif;
-}
-
-.creature .creature-name{
-	position: relative;
-	width: 100px; 
-	height: 25px; 
-	bottom: 19px; 
-	background-color: #45515f; 
-	text-align: center;
-	line-height: 25px;
-	font-family: 'Oswald';
-	font-size: 14px;
-
-}
-
-.creature .creature-init{
-	position: relative;
-	width: 25px; 
-	height: 25px; 
-	bottom: 44px;
-	left: 105px;
-	background-color: #45515f; 
-	text-align: center;
-	line-height: 25px;
-	font-family: 'Oswald';
-	font-size: 14px;
-
-
-}
-
 .controls-top{
 	width: 450px; 
 	height: 90px; 
@@ -153,16 +87,4 @@ ul.turn-button-column li{
 	width: 50%; 
 }
 
-.clearfix:after {
-     visibility: hidden;
-     display: block;
-     font-size: 0;
-     content: " ";
-     clear: both;
-     height: 0;
-     }
-.clearfix { display: inline-block; }
-/* start commented backslash hack \*/
-* html .clearfix { height: 1%; }
-.clearfix { display: block; }
-/* close commented backslash hack */
+

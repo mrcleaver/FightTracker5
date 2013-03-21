@@ -5,6 +5,8 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 		<script src="lib/bootstrap/css/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/creature.css" />
+		<link rel="stylesheet" type="text/css" href="css/controls-bottom.css" />
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" />
 <link href='http://fonts.googleapis.com/css?family=Ubuntu|Open+Sans' rel='stylesheet' type='text/css'>
 
@@ -27,9 +29,9 @@
 			<div class="right-column">
   				<div class="two-button-long-wrap">
 				<ul class="turn-button-column">
-					<li><div class="control-button long-button" id="undo">Undo</button></li>
-					<li><div class="control-button long-button" id="redo">Redo</button></li>
-					<li><div class="control-button long-button" id="save">Save</button></li>
+					<li><div class="control-button long-button" id="undo-turn">Undo</button></li>
+					<li><div class="control-button long-button" id="redo-turn">Redo</button></li>
+					<li><div class="control-button long-button" id="save-battle">Save</button></li>
 					<li><div class="control-button long-button" id="load-battle">Load</button></li>
 				</ul>
 				</div> 
@@ -37,32 +39,36 @@
 	</div>
 	</div>
 		<div class="container">
-			<div class="creature" id="entry">
-				<div class="creature-name">Creature name</div>
-				<div class="creature-init">99</div>
-				<div class="creature-close">X</div>
+			<div class="creature clearfix" id="entry">
+				<div class="creature-name stat-top">Creature name</div>
+				<div class="creature-init stat-top">99</div>
+				<div class="creature-close stat-top clear"><i class="icon-remove-circle icon-white"></i></div>
 				<div class="creature-left">
-					<strong>HP: </strong><span class="hp-cur">100 </span>/<span class="hp-max"> 120</span><span class="hp-per"> (83%)</span>
+					<div class="hp-cur">
+						<span class="hp-cur">1633</span>
+					</div>
+					<span class="hp-max label">1900</span>
+					<span class="hp-percent label label-important">76%</span>
+
+					<input class="creature-temp-hp creature-stat-input" placeholder="temp"></input>
+					<input class="creature-ongoing creature-stat-input" placeholder="ongoing"></input>
+					<input class="creature-regen creature-stat-input" placeholder="regen"></input>
 				</div>
 				<div class="creature-right">
-					<div class="effects">
-						<ul>
-							<li><span class="label label-important">Bleed</span></li>
-							<li><span class="label label-info">M. Weapon (s)</span>
-						</ul>
-					</div>
+					Creature right
 				</div>
 			</div>
+
+
 		</div>
 
 		<div class="controls-bottom-center">
 			<fieldset class="controls-bottom clearfix">
-				<legend>Create creature</legend>
 				<input type="text" id="control-creature-name-input" placeholder="Name"></input>
 				<input type="number" id="control-creature-initiative-input" placeholder="Init"></input>
 				<input type="number" id="control-creature-hp-input" placeholder="HP"></input>
 				<div class="control-buttons">
-					<div class="control-button long-button" id="create">Create</div>
+					<div class="control-button long-button" id="create-creature">Create</div>
 					<div class="control-button long-button" id="save-creature">Save</div>
 					<div class="control-button long-button" id="load-creature">Load</div>
 				</div>
