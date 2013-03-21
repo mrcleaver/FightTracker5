@@ -93,7 +93,6 @@ div.creature .hp-percent{
 }
 
 div.creature input.creature-stat-input{
-	position: absolute;	
     font-family: ubuntu;
     font-size: 11px;
     outline: none;
@@ -107,6 +106,8 @@ div.creature input.creature-stat-input{
 }
 
 div.creature input.creature-temp-hp{
+		position: absolute;	
+
     width: 40px;
     height: 15px;
     left: 95px;
@@ -114,6 +115,8 @@ div.creature input.creature-temp-hp{
 }
 
 div.creature input.creature-ongoing{
+		position: absolute;	
+
 	width: 40px;
 	height: 15px;
 	left: 95px;
@@ -122,10 +125,41 @@ div.creature input.creature-ongoing{
 }
 
 div.creature input.creature-regen{
+		position: absolute;	
+
 	width: 40px;
 	height: 15px;
 	left: 95px;
 	top: 60px;
 	color: #468847;
+}
+
+div.creature-effects-wrapper{
+    position: absolute;
+    left: 150px;
+    top: 14px;
+}
+
+div.creature-effects-wrapper ul{
+	margin: 0px auto;
+	padding: 0px;
+	width: 140px;
+}
+
+div.creature-effects-wrapper ul li{
+	list-style: none;
+	float: left;
+	height: 20px;
+	width: 70px;	
+}
+
+div.creature-effects-wrapper ul li span.label{
+	font-size: 9px;
+	font-family: verdana;
+	text-align: center;
+	width: 60px;
+	overflow: hidden;
+	padding: 1px 2px;
+	font-weight: normal;
 }
 
