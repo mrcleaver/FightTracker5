@@ -1,0 +1,28 @@
+.controls-bottom-center{
+	width: 100%;
+	border-top: 1px solid #646464;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background-color: #2A333C;
+	position: fixed; 
+	bottom: 0px;
+	z-index: 999;
+}
+
+.controls-bottom-center fieldset.controls-bottom{
+	margin-left: auto;
+	margin-right: auto; 
+	width: 800px;
+	text-align: center;
+}
+
+.controls-bottom .control-buttons{
+	margin-left: auto;
+	margin-right: auto; 
+	width: 320px;
+}
+
+.controls-bottom .control-button{
+	float: left;
+	margin: 0px 3px 0px 3px; 
+}

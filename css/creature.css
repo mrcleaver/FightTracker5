@@ -1,0 +1,165 @@
+div.creature{
+	width: 500px;
+	height: 100px;
+	margin-left: auto;
+	margin-right: auto; 
+	margin-bottom: 20px;
+	border: 1px solid #646464;
+	position: relative;
+	font-size: 11px;
+	padding: 5px;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+div.creature div.stat-top{
+	position: absolute;
+	background-color: #45515f; 
+	text-align: center;
+	line-height: 25px;
+	font-family: 'Oswald';
+	font-size: 14px;
+}
+
+div.creature div.creature-close{
+	width: 25px; 
+	height: 25px; 
+	bottom: 98px;
+	left: 498px; 
+}
+
+div.creature div.clear{
+	background-color: transparent;
+}
+
+div.creature div.creature-name{
+	width: 100px; 
+	height: 25px; 
+	bottom: 98px; 
+}
+
+div.creature div.creature-init{
+	width: 25px; 
+	height: 25px; 
+	bottom: 98px;
+	left: 110px;
+}
+
+div.creature div.creature-left{
+	position: relative;
+	float: left;
+	width: 30%;
+}
+
+div.creature div.creature-right{
+	position: relative;
+	float: right;
+}
+
+div.creature div.hp-cur{
+	position: absolute;
+	top: 14px;
+	left: 10px;
+	text-align: center;	
+    width: 80px;
+    height: 80px;
+    border: 1px solid;
+    overflow: hidden;
+    border: 1px solid;
+}
+
+div.creature div.hp-cur span{
+	font-size: 35px;
+	line-height: 78px; 
+}
+
+div.creature .hp-slash{
+	position: absolute; 
+	top: 50px;
+	left: 95px; 
+}
+
+div.creature .hp-max{
+	position: absolute;
+	top: 77px; 
+	left: 11px;
+	font-size: 11px;
+}
+
+div.creature .hp-percent{
+	position: absolute;
+	top: 15px;
+	left: 11px;
+	font-size: 11px;
+}
+
+div.creature input.creature-stat-input{
+    font-family: ubuntu;
+    font-size: 11px;
+    outline: none;
+    color: #ece9d7;
+    padding: 2px;
+    background-color: #2a333c;
+    border-width: 0px 0px 1px 0px;
+    border-color: #2A333C;
+    border-radius: 0px;
+    text-align: left;
+}
+
+div.creature input.creature-temp-hp{
+		position: absolute;	
+
+    width: 40px;
+    height: 15px;
+    left: 95px;
+    top: 10px;
+}
+
+div.creature input.creature-ongoing{
+		position: absolute;	
+
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 35px;
+	color: #b94a48;
+}
+
+div.creature input.creature-regen{
+		position: absolute;	
+
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 60px;
+	color: #468847;
+}
+
+div.creature-effects-wrapper{
+    position: absolute;
+    left: 150px;
+    top: 14px;
+}
+
+div.creature-effects-wrapper ul{
+	margin: 0px auto;
+	padding: 0px;
+	width: 140px;
+}
+
+div.creature-effects-wrapper ul li{
+	list-style: none;
+	float: left;
+	height: 20px;
+	width: 70px;	
+}
+
+div.creature-effects-wrapper ul li span.label{
+	font-size: 9px;
+	font-family: verdana;
+	text-align: center;
+	width: 60px;
+	overflow: hidden;
+	padding: 1px 2px;
+	font-weight: normal;
+}
+

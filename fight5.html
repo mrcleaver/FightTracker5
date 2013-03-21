@@ -1,17 +1,88 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 		<script src="lib/bootstrap/css/bootstrap.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/creature.css" />
+		<link rel="stylesheet" type="text/css" href="css/controls-bottom.css" />
 		<link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" />
+<link href='http://fonts.googleapis.com/css?family=Ubuntu|Open+Sans' rel='stylesheet' type='text/css'>
 
 		<title>FightTracker Version 5</title>
 	</head>
 	<body>
-		
-	
+	<div class="controls-top-center">
+		<div class="controls-top clearfix">
+			<div class="left-column">
+				<h4>Turn</h4>
+				<div class="number-box">1</div>
+				<div class="one-button-short-wrap">
+					<ul class="turn-button-column">
+						<li><div class="control-button" id="turn-prev"><i class="icon-arrow-left icon-white"></i></div></button></li>
+						<li><div class="control-button" id="turn-next"><i class="icon-arrow-right icon-white"></i></div></button></li>
+					</ul>
+				</div>
+			</div>
+			
+			<div class="right-column">
+  				<div class="two-button-long-wrap">
+				<ul class="turn-button-column">
+					<li><div class="control-button long-button" id="undo-turn">Undo</button></li>
+					<li><div class="control-button long-button" id="redo-turn">Redo</button></li>
+					<li><div class="control-button long-button" id="save-battle">Save</button></li>
+					<li><div class="control-button long-button" id="load-battle">Load</button></li>
+				</ul>
+				</div> 
+			</div>
+	</div>
+	</div>
+		<div class="container">
+			<div class="creature clearfix" id="entry">
+				<div class="creature-name stat-top">Creature name</div>
+				<div class="creature-init stat-top">99</div>
+				<div class="creature-close stat-top clear"><i class="icon-remove-circle icon-white"></i></div>
+				<div class="creature-left">
+					<div class="hp-cur">
+						<span class="hp-cur">1633</span>
+					</div>
+					<span class="hp-max label">1900</span>
+					<span class="hp-percent label label-important">76%</span>
 
+					<input class="creature-temp-hp creature-stat-input" placeholder="temp"></input>
+					<input class="creature-ongoing creature-stat-input" placeholder="ongoing"></input>
+					<input class="creature-regen creature-stat-input" placeholder="regen"></input>
+					<div class="creature-effects-wrapper">
+						<ul class="creature-effects">
+							<li><span class="label label-important">Immobilized</span></li>
+							<li><span class="label label-success">Call to Arms</li>
+							<li><span class="label label-important">Combat advantage</li>
+							<li><span class="label label-success">BA</li>
+							<li><span class="label label-success">Boin</li>
+							<li><span class="label">Effect</li>
+							<li><span class="label">Effect</li>
+							<li><span class="label">Effect</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+
+		<div class="controls-bottom-center">
+			<fieldset class="controls-bottom clearfix">
+				<input type="text" id="control-creature-name-input" placeholder="Name"></input>
+				<input type="number" id="control-creature-initiative-input" placeholder="Init"></input>
+				<input type="number" id="control-creature-hp-input" placeholder="HP"></input>
+				<div class="control-buttons">
+					<div class="control-button long-button" id="create-creature">Create</div>
+					<div class="control-button long-button" id="save-creature">Save</div>
+					<div class="control-button long-button" id="load-creature">Load</div>
+				</div>
+			</fieldset>
+		</div>
 	</body>
 </html>
