@@ -9,6 +9,11 @@
 	z-index: 999;
 }
 
+.controls-bottom-spacer{
+	width: 100%;
+	height: 95px; 
+}
+
 .controls-bottom-center fieldset.controls-bottom{
 	margin-left: auto;
 	margin-right: auto; 
