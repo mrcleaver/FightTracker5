@@ -11,6 +11,22 @@ div.creature{
 	font-family: 'Ubuntu', sans-serif;
 }
 
+div.creature.active{
+	border: 1px solid rgb(146, 117, 99);	
+}
+
+div.creature.inactive{
+	height: 0px;
+    opacity: 0.25;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+}
+
+div.creature.delaying{
+	opacity: 0.7;
+}
+
 div.creature div.stat-top{
 	position: absolute;
 	background-color: #45515f; 
@@ -23,36 +39,55 @@ div.creature div.stat-top{
 div.creature div.creature-close{
 	width: 25px; 
 	height: 25px; 
-	bottom: 98px;
+	top: -13px;
 	left: 498px; 
+}
+
+div.creature div.creature-delay{
+	width: 25px; 
+	height: 25px; 
+	top: -15px;
+	left: 135px; 
+}
+
+div.creature div.creature-inactivate{
+	width: 25px; 
+	height: 25px; 
+	top: -15px;
+	left: 150px; 
 }
 
 div.creature div.clear{
 	background-color: transparent;
 }
 
+div.creature.active div.creature-name{
+	background-color: #E36b23;
+}
+
 div.creature div.creature-name{
 	width: 100px; 
 	height: 25px; 
-	bottom: 98px; 
+	top: -13px;
+}
+
+div.creature.active div.creature-init{
+	background-color: #E36b23;
 }
 
 div.creature div.creature-init{
 	width: 25px; 
 	height: 25px; 
-	bottom: 98px;
+	top: -13px;
 	left: 110px;
+}
+
+div.creature.inactive div.creature-left{
+	visibility: hidden;
 }
 
 div.creature div.creature-left{
 	position: relative;
-	float: left;
-	width: 30%;
-}
-
-div.creature div.creature-right{
-	position: relative;
-	float: right;
 }
 
 div.creature div.hp-cur{
@@ -161,5 +196,24 @@ div.creature-effects-wrapper ul li span.label{
 	overflow: hidden;
 	padding: 1px 2px;
 	font-weight: normal;
+}
+
+div.creature-action-wheel{
+	position: absolute;
+    left: 342px;
+    width: 125px;
+    top: 18px;
+}
+
+div.creature-action-wheel input.creature-action-wheel-input{
+	width: 117px;
+	margin-bottom: 2px; 
+	margin-top: 2px;
+	font-size: 11px; 
+	font-family: ubuntu;
+}
+
+div.creature-action-wheel button.btn-mini{
+	width: 60px;
 }
 
