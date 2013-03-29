@@ -72,10 +72,11 @@ function bindEventsForCreature(id){
 		var effectId = $(this).attr("id"); 
 		var newEffectName; 
 		if(effectId != undefined){
-			newEffectName = controllerEditEffect(id, effectId, value, null); 
+			var e = getEffectFromString(value); 
+			newEffectName = controllerEditEffect(id, effectId, e.name, e.type); 
 		}else{
-			console.log("Create new");
-			newEffectName = value;  
+			var e = getEffectFromString(value); 
+			newEffectName = controllerAddEffect(this, e.type, id, e.name); 
 		}
 		return newEffectName; 
 	});
@@ -93,12 +94,36 @@ function bindEventsForCreature(id){
 
 }
 
+function getEffectFromString(effectString){
+	var effectType; 
+	var effectName;
+	var sign = effectString.substr(0,1); 
+
+	if(effectString == "") return null; 
+
+	if(sign == '+'){
+		effectType = EFFECT_TYPE.POSITIVE; 
+		effectName = effectString.substr(1,effectString.length); 
+	}else if(sign == '-'){
+		effectType = EFFECT_TYPE.NEGATIVE;
+		effectName = effectString.substr(1,effectString.length); 				 
+	}else{
+		effectType = EFFECT_TYPE.NEUTRAL;
+		effectName = effectString;  
+	}	
+
+	return {name: effectName, type: effectType};
+}
+
 function controllerDeleteEffect(creatureId, effectId){
 	var command = new RemoveEffectCommand(creatureId, effectId); 
 	executeCommand(command); 
 }
 
 function controllerEditEffect(creatureId, effectId, newName, newType){
+	if(newName == ""){
+		return; 
+	}
 	var command = new EditEffectCommand(creatureId, effectId, newName, newType); 
 	executeCommand(command); 
 }
@@ -149,10 +174,17 @@ function controllerCreateCreature(){
 
 function controllerChangeHp(event, subtraction, id){
 	var val = parseInt($("#"+id + " input.caw-input").val()); 
+	var damageCreature = subtraction; 
 	if(!isNaN(val)){
+		if(val < 0 && !subtraction){
+			damageCreature = true; 
+		}
+		if(val < 0 && subtraction){
+			damageCreature = false; 
+		}
 		val = Math.abs(val); 
 		var command; 
-		if(subtraction){
+		if(damageCreature){
 			command = new DamageCreatureCommand(currentBattle.getCreature(id), val); 
 		}else{
 			command = new HealCreatureCommand(currentBattle.getCreature(id), val); 
@@ -161,9 +193,8 @@ function controllerChangeHp(event, subtraction, id){
 	}
 }
 
-function controllerAddEffect(event, effectType, id){
-	console.log("controllerAddEffect");
-	var effectName = $("#"+id +" input.caw-input").val(); 
+function controllerAddEffect(event, effectType, id, value){
+	var effectName = (value == undefined) ? $("#"+id +" input.caw-input").val() : value; 
 	if(effectName == ""){
 		return; 
 	}
