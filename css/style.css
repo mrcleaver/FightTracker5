@@ -1,3 +1,7 @@
+.nodisplay{
+	display: none;
+}
+
 .clickable{
 	cursor: pointer;
 }
@@ -36,7 +40,7 @@ ul.turn-button-column li{
 	width: 25px; 
 	text-align: center; 
 	line-height: 25px; 
-	font-face: 'Open Sans';
+	font-face: 'Ubuntu';
 	font-weight: bold;
 }
 

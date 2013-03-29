@@ -32,8 +32,9 @@ div.creature div.stat-top{
 	background-color: #45515f; 
 	text-align: center;
 	line-height: 25px;
-	font-family: 'Oswald';
-	font-size: 14px;
+	font-family: 'Ubuntu';
+	font-size: 12px;
+	overflow: hidden;
 }
 
 div.creature div.creature-close{
@@ -47,14 +48,14 @@ div.creature div.creature-delay{
 	width: 25px; 
 	height: 25px; 
 	top: -15px;
-	left: 135px; 
+	left: 185px; 
 }
 
 div.creature div.creature-inactivate{
 	width: 25px; 
 	height: 25px; 
 	top: -15px;
-	left: 150px; 
+	left: 200px; 
 }
 
 div.creature div.clear{
@@ -66,7 +67,7 @@ div.creature.active div.creature-name{
 }
 
 div.creature div.creature-name{
-	width: 100px; 
+	width: 150px; 
 	height: 25px; 
 	top: -13px;
 }
@@ -79,7 +80,7 @@ div.creature div.creature-init{
 	width: 25px; 
 	height: 25px; 
 	top: -13px;
-	left: 110px;
+	left: 160px;
 }
 
 div.creature.inactive div.creature-left{
@@ -88,6 +89,14 @@ div.creature.inactive div.creature-left{
 
 div.creature div.creature-left{
 	position: relative;
+}
+
+div.creature div.hp-cur input{
+	background-color: transparent;
+	text-align: center;
+	font-family: 'Ubuntu';
+	font-size: 28px; 
+	color: #ece9d7;
 }
 
 div.creature div.hp-cur{
@@ -103,7 +112,7 @@ div.creature div.hp-cur{
 }
 
 div.creature div.hp-cur span{
-	font-size: 35px;
+	font-size: 28px;
 	line-height: 78px; 
 }
 
@@ -141,32 +150,37 @@ div.creature input.creature-stat-input{
 }
 
 div.creature input.creature-temp-hp{
-		position: absolute;	
-
+	position: absolute;	
     width: 40px;
     height: 15px;
     left: 95px;
-    top: 10px;
+    top: 8px;
 }
 
 div.creature input.creature-ongoing{
-		position: absolute;	
-
+	position: absolute;	
 	width: 40px;
 	height: 15px;
 	left: 95px;
-	top: 35px;
+	top: 33px;
 	color: #b94a48;
 }
 
 div.creature input.creature-regen{
-		position: absolute;	
-
+	position: absolute;	
 	width: 40px;
 	height: 15px;
 	left: 95px;
-	top: 60px;
+	top: 58px;
 	color: #468847;
+}
+
+div.creature input.creature-action-point{
+	position: absolute;	
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 83px;
 }
 
 div.creature-effects-wrapper{
@@ -205,7 +219,7 @@ div.creature-action-wheel{
     top: 18px;
 }
 
-div.creature-action-wheel input.creature-action-wheel-input{
+div.creature-action-wheel input.caw-input{
 	width: 117px;
 	margin-bottom: 2px; 
 	margin-top: 2px;
