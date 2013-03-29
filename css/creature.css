@@ -202,11 +202,24 @@ div.creature-effects-wrapper ul li{
 	width: 70px;	
 }
 
+div.creature-effects-wrapper ul li input{
+	font-size: 9px; 
+	background-color: transparent; 
+	font-family: verdana; 
+	width: 60px; 
+	font-weight: normal; 
+    color: #ece9d7;
+    border: 0px;
+    text-align: center;
+    padding-top: 1px;
+}
+
 div.creature-effects-wrapper ul li span.label{
 	font-size: 9px;
 	font-family: verdana;
 	text-align: center;
 	width: 60px;
+	height: 14px;
 	overflow: hidden;
 	padding: 1px 2px;
 	font-weight: normal;

@@ -266,7 +266,8 @@ function AddEffectCommand(effectName, effectType, creatureId){
 AddEffectCommand.prototype.execute = function(){
 	var creature = currentBattle.getCreature(this.creatureId); 
 	if(creature.effects.getLength() < 8){
-		creature.effects.insertEnd(new Node(this.effect)); 
+		var effectNode = creature.effects.insertEnd(new Node(this.effect)); 
+		creature.effectsHash[this.effect.id] = effectNode; 
 		this.wasValidExecution = true; 
 		drawCreatureEffects(creature); 
 		currentBattle.logMessage(creature.toString() + " gained " + this.effect.toString(), this.id); 
@@ -278,16 +279,12 @@ AddEffectCommand.prototype.execute = function(){
 AddEffectCommand.prototype.undo = function(){
 	var creature = currentBattle.getCreature(this.creatureId); 	
 	if(this.wasValidExecution){
-		var it = creature.effects.iterator(); 
-		var node = null; 
-		while(it.hasNext()){
-			var node = it.next(); 
-			if(node.data.id == this.effect.id){
-				break; 
-			}
-		}
-		if(node != null){
-			creature.effects.remove(node); 
+		var effectNode = creature.effectsHash[this.effect.id]; 
+
+		var removedNode = creature.effects.remove(effectNode); 
+
+		if(removedNode != undefined){
+			delete creature.effectsHash[this.effect.id]; 
 			drawCreatureEffects(creature); 
 			currentBattle.logMessage(creature.toString() + " removed effect " + this.effect.toString(), this.id); 
 		}else{
@@ -302,32 +299,27 @@ AddEffectCommand.prototype.undo = function(){
  */
  EditEffectCommand.prototype = new Command(); 
  EditEffectCommand.prototype.constructor = EditEffectCommand; 
- function EditEffectCommand(effectId, creatureId, newName, newType){
+ function EditEffectCommand(creatureId, effectId, newName, newType){
  	Command.call(this); 
 	this.effectId = effectId; 
- 	this.creatureId = creatureId; 
- 	this.newName = newName; 
+ 	this.creatureId = creatureId;
+ 	this.newName = newName;
  	this.newType = newType; 
+
  	this.oldName; 
  	this.oldType; 
  }
  EditEffectCommand.prototype.execute = function(){
  	var creature = currentBattle.getCreature(this.creatureId); 
- 	var it = creature.effects.iterator(); 
- 	while(it.hasNext()){
- 		var node = it.next(); 
- 		if(node.data.id == this.effectId){
- 			break; 
- 		}
- 	}
- 	if(node != null){
+ 	var node = creature.effectsHash[this.effectId]; 
+
+ 	if(node != undefined){
  		this.oldName = node.data.name; 
  		this.oldType = node.data.type; 
  		
  		var oldEffectName = node.data.toString(); 
-
- 		node.data.name = this.newName; 
- 		node.data.type = this.newType; 
+ 		node.data.name = (this.newName == null) ? this.oldName : this.newName; 
+ 		node.data.type = (this.newType == null) ? this.oldType : this.newType; 
 		drawCreatureEffects(creature); 
  		currentBattle.logMessage(creature.toString() + " effect: " + oldEffectName + " -> " + node.data.toString(), this.id); 
  	}else{
@@ -337,14 +329,9 @@ AddEffectCommand.prototype.undo = function(){
 
  EditEffectCommand.prototype.undo = function(){
  	var creature = currentBattle.getCreature(this.creatureId); 
- 	var it = creature.effects.iterator(); 
- 	while(it.hasNext()){
- 		var node = it.next(); 
- 		if(node.data.id == this.effectId){
- 			break; 
- 		}
- 	}
- 	if(node != null){
+ 	var node = creature.effectsHash[this.effectId]; 
+
+ 	if(node != undefined){
  		var newEffectName = node.data.toString(); 
  		node.data.name = this.oldName; 
  		node.data.type = this.oldType; 

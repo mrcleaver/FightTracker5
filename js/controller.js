@@ -68,6 +68,23 @@ function bindEventsForCreature(id){
 		return controllerSetCurrentHp(id, value); 
 	});
 
+	$(byId + " ul.creature-effects").find("li>span").editable(function(value, settings){
+		var effectId = $(this).attr("id"); 
+		var newEffectName; 
+		if(id != undefined){
+			newEffectName = controllerEditEffect(id, effectId, value, null); 
+		}else{
+			console.log("Create new");
+			newEffectName = value;  
+		}
+		return newEffectName; 
+	});
+
+}
+
+function controllerEditEffect(creatureId, effectId, newName, newType){
+	var command = new EditEffectCommand(creatureId, effectId, newName, newType); 
+	executeCommand(command); 
 }
 
 function controllerDeleteCreature(event, id){

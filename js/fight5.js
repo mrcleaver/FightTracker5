@@ -132,6 +132,7 @@ DLinkedList.prototype.insertAfter = function(node, newNode){
 		node.next.prev = newNode; 
 	}
 	node.next = newNode; 
+	return newNode; 
 }
 
 DLinkedList.prototype.insertBefore = function(node, newNode){
@@ -143,6 +144,7 @@ DLinkedList.prototype.insertBefore = function(node, newNode){
 		node.prev.next = newNode; 
 	}
 	node.prev = newNode; 
+	return newNode; 
 }
 
 DLinkedList.prototype.insertBeginning = function(newNode){
@@ -151,16 +153,17 @@ DLinkedList.prototype.insertBeginning = function(newNode){
 		this.lastNode = newNode; 
 		newNode.prev = null; 
 		newNode.next = null; 
+		return newNode; 
 	}else{
-		this.insertBefore(this.firstNode, newNode); 
+		return this.insertBefore(this.firstNode, newNode); 
 	}
 }
 
 DLinkedList.prototype.insertEnd = function(newNode){
 	if(this.lastNode == null){
-		this.insertBeginning(newNode); 
+		return this.insertBeginning(newNode); 
 	}else{
-		this.insertAfter(this.lastNode, newNode); 
+		return this.insertAfter(this.lastNode, newNode); 
 	}
 }
 
@@ -257,6 +260,7 @@ function Creature(name, init, hp){
 	this.regen = 0; 
 	this.ap = 0; 
 	this.effects = new DLinkedList(); 
+	this.effectsHash = {}; 
 	this.status = CREATURE_STATUS.ACTIVE;
 }
 
