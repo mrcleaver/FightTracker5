@@ -1,0 +1,233 @@
+div.creature{
+	width: 500px;
+	height: 100px;
+	margin-left: auto;
+	margin-right: auto; 
+	margin-bottom: 20px;
+	border: 1px solid #646464;
+	position: relative;
+	font-size: 11px;
+	padding: 5px;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+div.creature.active{
+	border: 1px solid rgb(146, 117, 99);	
+}
+
+div.creature.inactive{
+	height: 0px;
+    opacity: 0.25;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+}
+
+div.creature.delaying{
+	opacity: 0.7;
+}
+
+div.creature div.stat-top{
+	position: absolute;
+	background-color: #45515f; 
+	text-align: center;
+	line-height: 25px;
+	font-family: 'Ubuntu';
+	font-size: 12px;
+	overflow: hidden;
+}
+
+div.creature div.creature-close{
+	width: 25px; 
+	height: 25px; 
+	top: -13px;
+	left: 498px; 
+}
+
+div.creature div.creature-delay{
+	width: 25px; 
+	height: 25px; 
+	top: -15px;
+	left: 185px; 
+}
+
+div.creature div.creature-inactivate{
+	width: 25px; 
+	height: 25px; 
+	top: -15px;
+	left: 200px; 
+}
+
+div.creature div.clear{
+	background-color: transparent;
+}
+
+div.creature.active div.creature-name{
+	background-color: #E36b23;
+}
+
+div.creature div.creature-name{
+	width: 150px; 
+	height: 25px; 
+	top: -13px;
+}
+
+div.creature.active div.creature-init{
+	background-color: #E36b23;
+}
+
+div.creature div.creature-init{
+	width: 25px; 
+	height: 25px; 
+	top: -13px;
+	left: 160px;
+}
+
+div.creature.inactive div.creature-left{
+	visibility: hidden;
+}
+
+div.creature div.creature-left{
+	position: relative;
+}
+
+div.creature div.hp-cur input{
+	background-color: transparent;
+	text-align: center;
+	font-family: 'Ubuntu';
+	font-size: 28px; 
+	color: #ece9d7;
+}
+
+div.creature div.hp-cur{
+	position: absolute;
+	top: 14px;
+	left: 10px;
+	text-align: center;	
+    width: 80px;
+    height: 80px;
+    border: 1px solid;
+    overflow: hidden;
+    border: 1px solid;
+}
+
+div.creature div.hp-cur span{
+	font-size: 28px;
+	line-height: 78px; 
+}
+
+div.creature .hp-slash{
+	position: absolute; 
+	top: 50px;
+	left: 95px; 
+}
+
+div.creature .hp-max{
+	position: absolute;
+	top: 77px; 
+	left: 11px;
+	font-size: 11px;
+}
+
+div.creature .hp-percent{
+	position: absolute;
+	top: 15px;
+	left: 11px;
+	font-size: 11px;
+}
+
+div.creature input.creature-stat-input{
+    font-family: ubuntu;
+    font-size: 11px;
+    outline: none;
+    color: #ece9d7;
+    padding: 2px;
+    background-color: #2a333c;
+    border-width: 0px 0px 1px 0px;
+    border-color: #2A333C;
+    border-radius: 0px;
+    text-align: left;
+}
+
+div.creature input.creature-temp-hp{
+	position: absolute;	
+    width: 40px;
+    height: 15px;
+    left: 95px;
+    top: 8px;
+}
+
+div.creature input.creature-ongoing{
+	position: absolute;	
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 33px;
+	color: #b94a48;
+}
+
+div.creature input.creature-regen{
+	position: absolute;	
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 58px;
+	color: #468847;
+}
+
+div.creature input.creature-action-point{
+	position: absolute;	
+	width: 40px;
+	height: 15px;
+	left: 95px;
+	top: 83px;
+}
+
+div.creature-effects-wrapper{
+    position: absolute;
+    left: 150px;
+    top: 14px;
+}
+
+div.creature-effects-wrapper ul{
+	margin: 0px auto;
+	padding: 0px;
+	width: 140px;
+}
+
+div.creature-effects-wrapper ul li{
+	list-style: none;
+	float: left;
+	height: 20px;
+	width: 70px;	
+}
+
+div.creature-effects-wrapper ul li span.label{
+	font-size: 9px;
+	font-family: verdana;
+	text-align: center;
+	width: 60px;
+	overflow: hidden;
+	padding: 1px 2px;
+	font-weight: normal;
+}
+
+div.creature-action-wheel{
+	position: absolute;
+    left: 342px;
+    width: 125px;
+    top: 18px;
+}
+
+div.creature-action-wheel input.caw-input{
+	width: 117px;
+	margin-bottom: 2px; 
+	margin-top: 2px;
+	font-size: 11px; 
+	font-family: ubuntu;
+}
+
+div.creature-action-wheel button.btn-mini{
+	width: 60px;
+}
+
