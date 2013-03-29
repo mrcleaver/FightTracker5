@@ -348,7 +348,7 @@ AddEffectCommand.prototype.undo = function(){
 */
 RemoveEffectCommand.prototype = new Command(); 
 RemoveEffectCommand.prototype.constructor = RemoveEffectCommand; 
-function RemoveEffectCommand(effectId, creatureId){
+function RemoveEffectCommand(creatureId, effectId){
 	Command.call(this); 
 	this.effectId = effectId; 
 	this.creatureId = creatureId; 
@@ -357,31 +357,28 @@ function RemoveEffectCommand(effectId, creatureId){
 RemoveEffectCommand.prototype.execute = function(){
 	//Find the effect from the creature and delete it. 
 	var creature = currentBattle.getCreature(this.creatureId); 
-	var it = creature.effects.iterator(); 
-	while(it.hasNext()){
-		var node = it.next(); 
-		if(node.data.id == this.effectId){
-			break; 
-		}
-	}
+	var node = creature.effectsHash[this.effectId]; 
 	if(node != null){
 		creature.effects.remove(node); 
-		this.removedEffect = node.data; 
+		this.removedEffect = node.data;
+		delete creature.effectsHash[this.effectId];  
 		drawCreatureEffects(creature); 		
-		currentBattle.logMessage(creature.toString() + " removed effect " + this.effect.toString(), this.id); 
+		currentBattle.logMessage(creature.toString() + " removed effect " + this.removedEffect.toString(), this.id); 
 	}else{
-		currentBattle.logMessage(creature.toString() + " could not remove effect " + this.effect.toString() + " effect not found",this.id); 
+		currentBattle.logMessage(creature.toString() + " could not remove effect " + this.effectId + " effect not found",this.id); 
 	}
 }
 RemoveEffectCommand.prototype.undo = function(){
-	if(removedEffect != null){
+	if(this.removedEffect != null){
 		var creature = currentBattle.getCreature(this.creatureId); 
 		if(creature.effects.getLength() < 8){
-			creature.effects.insertEnd(new Node(this.removedEffect)); 
+			var node = new Node(this.removedEffect); 
+			creature.effects.insertEnd(node);
+			creature.effectsHash[this.effectId] = node;  
 			drawCreatureEffects(creature); 			
-			currentBattle.logMessage(creature.toString() + " gained " + this.effect.toString(), this.id); 
+			currentBattle.logMessage(creature.toString() + " gained " + this.removedEffect.toString(), this.id); 
 		}else{
-			currentBattle.logMessage(creature.toString() + " could not gain " + this.effect.toString() + " too many effects on creature", this.id);  
+			currentBattle.logMessage(creature.toString() + " could not gain " + this.removedEffect.toString() + " too many effects on creature", this.id);  
 		}	
 	}
 }

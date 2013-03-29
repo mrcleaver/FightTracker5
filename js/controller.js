@@ -71,7 +71,7 @@ function bindEventsForCreature(id){
 	$(byId + " ul.creature-effects").find("li>span").editable(function(value, settings){
 		var effectId = $(this).attr("id"); 
 		var newEffectName; 
-		if(id != undefined){
+		if(effectId != undefined){
 			newEffectName = controllerEditEffect(id, effectId, value, null); 
 		}else{
 			console.log("Create new");
@@ -80,6 +80,22 @@ function bindEventsForCreature(id){
 		return newEffectName; 
 	});
 
+	$(byId + " ul.creature-effects").find("li>span").bind("click", function(e){
+		var effectId = $(this).attr("id"); 
+		if(e.metaKey){
+			var effectId = $(this).attr("id");
+			if(effectId != undefined){
+				controllerDeleteEffect(id, effectId);
+			} 
+			return false; 	
+		} 
+	});
+
+}
+
+function controllerDeleteEffect(creatureId, effectId){
+	var command = new RemoveEffectCommand(creatureId, effectId); 
+	executeCommand(command); 
 }
 
 function controllerEditEffect(creatureId, effectId, newName, newType){
