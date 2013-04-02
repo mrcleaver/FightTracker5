@@ -10,6 +10,31 @@ Command.prototype.undo = function(){}
 
 
 /*
+	SetCreatureStatusCommand
+	Sets the status of a creature. 
+	UNDO - Sets the status of a creature to its original status
+*/
+SetCreatureStatusCommand.prototype = new Command(); 
+SetCreatureStatusCommand.prototype.constructor = SetCreatureStatusCommand; 
+function SetCreatureStatusCommand(creature, status){
+	Command.call(this); 
+	this.creature = creature; 
+	this.originalStatus; 
+	this.newStatus = status; 
+}
+SetCreatureStatusCommand.prototype.execute = function(){
+	this.originalStatus = this.creature.status; 
+	this.creature.status = this.newStatus; 
+	drawCreatureStatus(this.creature); 
+	currentBattle.logMessage(this.creature.toString() + " status set to " + this.creature.status + " from " + this.originalStatus, this.id); 
+}
+SetCreatureStatusCommand.prototype.undo = function(){
+	this.creature.status = this.originalStatus; 
+	drawCreatureStatus(this.creature); 
+	currentBattle.logMessage(this.creature.toString() + " status set to " + this.creature.status + " from " + this.newStatus, this.id); 
+}
+
+/*
 	DeleteCreatureCommand
 	Deletes a creature in its current state (whatever that may be)
 	UNDO - Restores the creature to its previous state. 
@@ -33,6 +58,7 @@ DeleteCreatureCommand.prototype.undo = function(){
 	currentBattle.logMessage("Undeleted a creature: " + this.creature.toString(), this.id); 
 	bindEventsForCreature(this.creature.id); 
 }
+
 /*
 	CreateCreatureCommand
 	Creates a creature and inserts it into the initiative list. 
@@ -92,6 +118,42 @@ CreateCreatureCommand.prototype.undo = function(){
 }
 
 /*
+	SetCreatureInitCommand
+	Sets the creature's initiative score to a new value. 
+	UNDO - Sets the creature's initiative score to its original value. 
+*/
+SetCreatureInitCommand.prototype = new Command(); 
+SetCreatureInitCommand.prototype.constructor = SetCreatureInitCommand; 
+function SetCreatureInitCommand(creature, init){
+	Command.call(this); 
+	this.creature = creature; 
+	this.init = init; 
+	this.originalInit; 
+}
+SetCreatureInitCommand.prototype.execute = function(){
+	this.originalInit = this.creature.init; 
+	this.creature.init = this.init; 
+	var originalStatus = this.creature.status; 
+	this.creature.status = CREATURE_STATUS.DELETED; //Temporarily set the status to deleted for init calculations. 
+	currentBattle.initiatives.sort(sortInitiatives); 
+	var position = currentBattle.getPrevInitId(this.creature.init);
+	this.creature.status = originalStatus;  
+	redrawCreature(this.creature, position); 
+	currentBattle.logMessage(this.creature.toString() + " initiative changed from: " + this.originalInit + " to " + this.creature.init, this.id); 
+}
+SetCreatureInitCommand.prototype.undo = function(){
+	var originalStatus = this.creature.status; 
+	this.creature.status = CREATURE_STATUS.DELETED; 
+	this.creature.init = this.originalInit; 
+	currentBattle.initiatives.sort(sortInitiatives); 
+	var position = currentBattle.getPrevInitId(this.creature.init); 
+	this.creature.status = originalStatus; 
+	redrawCreature(this.creature, position); 
+	currentBattle.logMessage(this.creature.toString() + " initiative changed from: " + this.init + " to " + this.creature.init, this.id); 
+
+}
+
+/*
 	SetCreatureTempHpCommand
 	Changes a creature's temp HP value 
 */
@@ -113,6 +175,127 @@ SetCreatureTempHpCommand.prototype.undo = function(){
 	this.creature.temp = this.tempBeforeChange; 
 	drawCreatureRecords(this.creature); 	
 	currentBattle.logMessage(this.creature.toString() + " temp hp set to: " + this.creature.temp + " from: " + oldTemp, this.id); 
+}
+
+/*
+	SetCreatureOngoingCommand
+	Changes a creature's ongoing damage value 
+*/
+SetCreatureOngoingCommand.prototype = new Command(); 
+SetCreatureOngoingCommand.prototype.constructor = SetCreatureOngoingCommand; 
+function SetCreatureOngoingCommand(ongoing, creature){
+	Command.call(this); 	
+	this.creature = creature; 
+	this.ongoingBeforeChange = creature.ongoing; 
+	this.ongoing = ongoing; 
+}
+SetCreatureOngoingCommand.prototype.execute = function(){
+	this.creature.ongoing = this.ongoing; 
+	drawCreatureRecords(this.creature); 
+	currentBattle.logMessage(this.creature.toString() + " ongoing set to: " + this.creature.ongoing + " from: " + this.ongoingBeforeChange, this.id); 
+}
+SetCreatureOngoingCommand.prototype.undo = function(){
+	var oldOngoing = this.creature.ongoing; 
+	this.creature.ongoing = this.ongoingBeforeChange; 
+	drawCreatureRecords(this.creature); 	
+	currentBattle.logMessage(this.creature.toString() + " ongoing set to: " + this.creature.ongoing + " from: " + oldOngoing, this.id); 
+}
+
+/*
+	SetCreatureRegenCommand
+	Changes a creature's regen value 
+*/
+SetCreatureRegenCommand.prototype = new Command(); 
+SetCreatureRegenCommand.prototype.constructor = SetCreatureRegenCommand; 
+function SetCreatureRegenCommand(regen, creature){
+	Command.call(this); 	
+	this.creature = creature; 
+	this.regenBeforeChange = creature.regen; 
+	this.regen = regen; 
+}
+SetCreatureRegenCommand.prototype.execute = function(){
+	this.creature.regen = this.regen; 
+	drawCreatureRecords(this.creature); 
+	currentBattle.logMessage(this.creature.toString() + " regen set to: " + this.creature.regen + " from: " + this.regenBeforeChange, this.id); 
+}
+SetCreatureRegenCommand.prototype.undo = function(){
+	var oldRegen = this.creature.regen; 
+	this.creature.regen = this.regenBeforeChange; 
+	drawCreatureRecords(this.creature); 	
+	currentBattle.logMessage(this.creature.toString() + " ongoing set to: " + this.creature.regen + " from: " + oldRegen, this.id); 
+}
+
+/*
+	SetCreatureAPCommand
+	Changes a creature's ap value 
+*/
+SetCreatureAPCommand.prototype = new Command(); 
+SetCreatureAPCommand.prototype.constructor = SetCreatureAPCommand; 
+function SetCreatureAPCommand(ap, creature){
+	Command.call(this); 	
+	this.creature = creature; 
+	this.apBeforeChange = creature.ap; 
+	this.ap = ap; 
+}
+SetCreatureAPCommand.prototype.execute = function(){
+	this.creature.ap = this.ap; 
+	drawCreatureRecords(this.creature); 
+	currentBattle.logMessage(this.creature.toString() + " ap set to: " + this.creature.ap + " from: " + this.apBeforeChange, this.id); 
+}
+SetCreatureAPCommand.prototype.undo = function(){
+	var oldAp = this.creature.ap; 
+	this.creature.ap = this.apBeforeChange; 
+	drawCreatureRecords(this.creature); 	
+	currentBattle.logMessage(this.creature.toString() + " ap set to: " + this.creature.ap + " from: " + oldAp, this.id); 
+}
+
+/*
+	SetCreatureNameCommand
+	Sets a creature's name to a specific value, ignoring the unique name generator. 
+	UNDO - Resets the creature to its original name.
+*/
+SetCreatureNameCommand.prototype = new Command(); 
+SetCreatureNameCommand.prototype.constructor = SetCreatureNameCommand; 
+function SetCreatureNameCommand(creature, name){
+	Command.call(this); 
+	this.creature = creature; 
+	this.newName = name; 
+	this.oldName = creature.name; 
+}
+SetCreatureNameCommand.prototype.execute = function(){
+	this.creature.name = this.newName; 
+	drawUpdateCreatureName(this.creature.id); 
+	currentBattle.logMessage(this.creature.toString() + " name was changed to: " + this.creature.name + " from " + this.oldName, this.id); 
+}
+SetCreatureNameCommand.prototype.undo = function(){
+	this.creature.name = this.oldName; 
+	drawUpdateCreatureName(this.creature.id); 
+	currentBattle.logMessage(this.creature.toString() + " name was changed to: " + this.creature.name + " from " + this.newName, this.id); 
+}
+
+/*
+	SetCreatureMaxHpCommand
+	Sets a creature's max hp to a specific value. 
+	UNDO - Sets the creature's max HP to the value prior to this set. 
+*/
+
+SetCreatureMaxHpCommand.prototype = new Command(); 
+SetCreatureMaxHpCommand.prototype.constructor = SetCreatureMaxHpCommand; 
+function SetCreatureMaxHpCommand(creature, newHp){
+	Command.call(this); 
+	this.creature = creature; 
+	this.newMaxHp = newHp; 
+	this.oldMaxHp = creature.hpmax; 
+}
+SetCreatureMaxHpCommand.prototype.execute = function(){
+	this.creature.hpmax = this.newMaxHp; 
+	drawUpdateCreatureHp(this.creature.id); 
+	currentBattle.logMessage(this.creature.toString() + " max hp set to: " + this.creature.hpmax + " from " + this.oldMaxHp, this.id); 
+}
+SetCreatureMaxHpCommand.prototype.undo = function(){
+	this.creature.hpmax = this.oldMaxHp; 
+	drawUpdateCreatureHp(this.creature.id); 
+	currentBattle.logMessage(this.creature.toString() + " max hp set to: " + this.creature.hpmax + " from " + this.newMaxHp, this.id); 
 }
 
 /*

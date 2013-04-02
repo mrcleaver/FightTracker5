@@ -30,6 +30,20 @@ function drawCreatureRecords(creature){
 	}
 }
 
+function drawCreatureStatus(creature){
+	var status = $("#"+creature.id);
+	switch(creature.status){
+		case CREATURE_STATUS.DELAYING:
+			$(status).removeClass("active inactive").addClass("delaying"); 
+			break; 
+		case CREATURE_STATUS.INACTIVE:
+			$(status).removeClass("delaying active").addClass("inactive"); 
+			break;
+		default:
+			$(status).removeClass("active inactive delaying"); 			
+	}
+}
+
 function drawCreatureEffects(creature){
 	var effects = $("#"+creature.id + " ul.creature-effects").find("li>span"); 
 	var it = creature.effects.iterator(); 
@@ -52,12 +66,29 @@ function drawCreatureEffects(creature){
 	});
 }
 
+function drawUpdateCreatureName(id){
+	var name = $("#"+id).find(".creature-name"); 
+	var creature = currentBattle.getCreature(id); 
+	name.text(creature.name); 
+}
+
 function drawUpdateCreatureHp(id){
 	var stats = $("#"+id).find(".creature-left");
 	var creature = currentBattle.getCreature(id); 
 	stats.find("span.hp-cur").text(creature.hpcur); 
 	stats.find("span.hp-max").text(creature.hpmax); 
 	stats.find("span.hp-percent").text(((creature.hpcur / creature.hpmax) * 100).toPrecision(4)); 
+}
+
+function redrawCreature(creature, newAfterPosition){
+	var creatureDom = $("#"+creature.id); 
+	creatureDom.detach(); 
+	if(newAfterPosition != null){
+		creatureDom.insertAfter("#"+newAfterPosition); 
+	}else{
+		creatureDom.prependTo("#fightcontainer"); 
+	}
+	creatureDom.find(".creature-init").text(creature.init); 
 }
 
 function drawCreature(creature, afterPosition){

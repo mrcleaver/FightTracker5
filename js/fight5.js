@@ -196,6 +196,83 @@ function createNewBattle(){
 		messages: [], //List of messages
 		names: {}, //List of creature names and how many of each there are. 
 		creatures: {}, //Dictionary of creature IDs to creatures
+		cursor: null, //The actively selected creature in the battle. 
+		cursorNext: function(){
+			if(this.initiatives.length == 0){
+				this.cursor = null; 
+				return null; 
+			}
+			if(this.cursor == null){
+				if(this.initiatives[0].status == CREATURE_STATUS.ACTIVE){
+					this.cursor = this.initiatives[0]; 
+					return this.cursor;
+				}else{
+					return null; 
+				} 
+			}
+			var cursorPosition; //Determine the true position of the cursor. 
+			for(var i = 0; i < this.initiatives.length; i++){
+				if(this.initiatives[i] == this.cursor){
+					cursorPosition = i; 
+					break; 
+				}
+			}
+			for(var i = (cursorPosition + 1) % this.initiatives.length; i != cursorPosition;){
+				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+					this.cursor = this.initiatives[i]; 
+					return this.cursor; 
+				}
+
+				i = (i + 1) % this.initiatives.length; 
+				if(i == cursorPosition){
+					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+						this.cursor = this.initiatives[i]; 
+						return this.cursor; 
+					}else{
+						return null; 
+					}
+				}
+			}
+			return null;
+		},
+		cursorPrev: function(){
+			if(this.initiatives.length == 0){
+				this.cursor = null; 
+				return null; 
+			}
+			if(this.cursor == null){
+				if(this.initiatives[this.initiatives.length-1].status == CREATURE_STATUS.ACTIVE){
+					this.cursor = this.initiatives[this.initiatives.length-1]; 
+					return this.cursor;
+				}else{
+					return null; 
+				} 
+			}
+			var cursorPosition; //Determine the true position of the cursor. 
+			for(var i = 0; i < this.initiatives.length; i++){
+				if(this.initiatives[i] == this.cursor){
+					cursorPosition = i; 
+					break; 
+				}
+			}
+			//Go backwards to find the previous cursor position. 
+			for(var i = (cursorPosition + this.initiatives.length -1) % this.initiatives.length; i != cursorPosition;){
+				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+					this.cursor = this.initiatives[i]; 
+					return this.cursor; 
+				}
+
+				i = (i + this.initiatives.length - 1) % this.initiatives.length; 
+				if(i == cursorPosition){
+					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+						this.cursor = this.initiatives[i]; 
+						return this.cursor; 
+					}else{
+						return null; 
+					}
+				}
+			}
+			return null;		},
 		getCreature: function(id){
 			if(this.creatures[id] != undefined){
 				return this.creatures[id]; 
@@ -204,19 +281,22 @@ function createNewBattle(){
 		},
 		addCreature: function(creature){
 			var position = this.getPrevInitId(creature.init); 
-			if(this.creatures[creature.id] == undefined){
-				//Add the creature to the initiative list
-				this.initiatives.push(creature); 
-			}
-			this.initiatives.sort(sortInitiatives);  			
+			//Add the creature to the initiative list
+			this.initiatives.push(creature); 
+			this.initiatives.sort(sortInitiatives);  									
+			console.log("Drawing creature at position: " + position); 
 			drawCreature(creature, position); 
 			drawCreatureEffects(creature); 
 			drawCreatureRecords(creature); 
-			
+			drawCreatureStatus(creature); 
 		},
 		//Given an initiative value, returns the ID of creature immediately before this initiative score. 
 		//Returns null if no creatures before this initiative score 
 		getPrevInitId: function(initiative){ 
+			initiative = parseInt(initiative); 
+			if(isNaN(initiative)){
+				throw "Invalid initiative specified"; 
+			}
 			//Just do a linear search since this initiative list is likely to be fairly small
 			if(this.initiatives.length == 0){
 				return null; 

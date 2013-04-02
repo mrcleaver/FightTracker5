@@ -11,6 +11,13 @@ var EFFECT_TYPE = {
 	NEUTRAL: "NETURAL"
 }
 
+RECORD_TYPE = {
+	TEMP_HP: "TEMP_HP",
+	REGEN: "REGEN",
+	ONGOING: "ONGOING",
+	AP: "AP"
+}
+
 function executeCommand(command){
 	command.execute(); 
 	currentBattle.history.push(command); 
@@ -57,16 +64,48 @@ function bindEventsForCreature(id){
 		controllerChangeHp(this, true, id); 
 	});	
 	$(byId + " .creature-temp-hp").on("blur", function(){
-		controllerModTemp(this, id); 
+		var val = $("#"+id + " input.creature-temp-hp").val(); 
+		controllerModCreatureRecord(this, id, val, RECORD_TYPE.TEMP_HP); 
 	});
-
+	$(byId + " .creature-ongoing").on("blur", function(){
+		var val = $("#"+id + " input.creature-ongoing").val(); 
+		controllerModCreatureRecord(this, id, val, RECORD_TYPE.ONGOING); 
+	});
+	$(byId + " .creature-regen").on("blur", function(){
+		var val = $("#"+id + " input.creature-regen").val(); 
+		controllerModCreatureRecord(this, id, val, RECORD_TYPE.REGEN); 
+	});			
+	$(byId + " .creature-action-point").on("blur", function(){
+		var val = $("#"+id + " input.creature-action-point").val(); 
+		controllerModCreatureRecord(this, id, val, RECORD_TYPE.AP); 
+	});				
 	$(byId + " div.creature-close").on("click", function(){
 		controllerDeleteCreature(this, id); 
 	});
 
+	$(byId + " div.creature-name").editable(function(value, settings){
+		return controllerSetCreatureName(id, value); 
+	});	
+
+	$(byId + " div.creature-init").editable(function(value, settings){
+		return controllerSetCreatureInit(id, value); 
+	});		
+
 	$(byId + " span.hp-cur").editable(function(value, settings){
 		return controllerSetCurrentHp(id, value); 
 	});
+
+	$(byId + " span.hp-max").editable(function(value, settings){
+		return controllerSetMaxHp(id, value); 
+	});
+
+	$(byId + " div.creature-delay").on("click", function(){
+		controllerSetStatus(id, CREATURE_STATUS.DELAYING); 
+	});
+
+	$(byId + " div.creature-resume").on("click", function(){
+		controllerSetStatus(id, CREATURE_STATUS.ACTIVE); 
+	});	
 
 	$(byId + " ul.creature-effects").find("li>span").editable(function(value, settings){
 		var effectId = $(this).attr("id"); 
@@ -115,6 +154,14 @@ function getEffectFromString(effectString){
 	return {name: effectName, type: effectType};
 }
 
+function controllerSetStatus(creatureId, status){
+	var creature = currentBattle.getCreature(creatureId); 
+	if(creature.status != status){
+		var command = new SetCreatureStatusCommand(currentBattle.getCreature(creatureId), status); 
+		executeCommand(command);
+	} 
+}
+
 function controllerDeleteEffect(creatureId, effectId){
 	var command = new RemoveEffectCommand(creatureId, effectId); 
 	executeCommand(command); 
@@ -138,6 +185,37 @@ function controllerDeleteCreature(event, id){
 	} 
 }
 
+function controllerSetCreatureInit(id, init){
+	var init = parseInt(init); 
+	if(!isNaN(init)){
+		var command = new SetCreatureInitCommand(currentBattle.getCreature(id), init); 
+		executeCommand(command); 
+		return init; 
+	}
+	return currentBattle.getCreature(id).init;
+}
+
+function controllerSetCreatureName(id, name){
+	if(name.length != 0){
+		var command = new SetCreatureNameCommand(currentBattle.getCreature(id), name); 
+		executeCommand(command); 
+		return name; 
+	}else{
+		return currentBattle.getCreature(id).name; 
+	}
+}
+
+function controllerSetMaxHp(id, hp){
+	var value = parseInt(hp); 
+	if(!isNaN(value)){
+		var command = new SetCreatureMaxHpCommand(currentBattle.getCreature(id), hp); 
+		executeCommand(command); 
+		return value; 		
+	}else{
+		return currentBattle.getCreature(id).hpmax; 
+	}	
+}
+
 function controllerSetCurrentHp(id, hp){
 	var value = parseInt(hp); 
 	if(!isNaN(value)){
@@ -147,6 +225,32 @@ function controllerSetCurrentHp(id, hp){
 	}else{
 		return currentBattle.getCreature(id).hpcur; 
 	}	
+}
+
+function controllerModCreatureRecord(event, id, value, record){
+	var val = parseInt(value); 
+	var command; 
+	if(!isNaN(val)){
+		switch(record){
+			case RECORD_TYPE.TEMP_HP:
+				command = new SetCreatureTempHpCommand(val, currentBattle.getCreature(id));
+				break; 
+			case RECORD_TYPE.REGEN:
+				command = new SetCreatureRegenCommand(val, currentBattle.getCreature(id));
+				break; 
+			case RECORD_TYPE.ONGOING:
+				command = new SetCreatureOngoingCommand(val, currentBattle.getCreature(id)); 
+				break;
+			case RECORD_TYPE.AP:
+				command = new SetCreatureAPCommand(val, currentBattle.getCreature(id)); 
+				break; 
+			default: 
+				throw "Record change not recognized"; 
+		}
+		executeCommand(command); 
+	}else{
+		drawCreatureRecords(currentBattle.getCreature(id)); 
+	}
 }
 
 function controllerModTemp(event, id){
