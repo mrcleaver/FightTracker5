@@ -207,6 +207,7 @@ function createNewBattle(){
 					this.cursor = this.initiatives[0]; 
 					return this.cursor;
 				}else{
+					this.cursor = null; 
 					return null; 
 				} 
 			}
@@ -229,10 +230,12 @@ function createNewBattle(){
 						this.cursor = this.initiatives[i]; 
 						return this.cursor; 
 					}else{
+						this.cursor = null; 	
 						return null; 
 					}
 				}
 			}
+			this.cursor = null; 	
 			return null;
 		},
 		cursorPrev: function(){
@@ -245,6 +248,7 @@ function createNewBattle(){
 					this.cursor = this.initiatives[this.initiatives.length-1]; 
 					return this.cursor;
 				}else{
+					this.cursor = null; 
 					return null; 
 				} 
 			}
@@ -268,10 +272,12 @@ function createNewBattle(){
 						this.cursor = this.initiatives[i]; 
 						return this.cursor; 
 					}else{
+						this.cursor = null; 
 						return null; 
 					}
 				}
 			}
+			this.cursor = null; 
 			return null;		},
 		getCreature: function(id){
 			if(this.creatures[id] != undefined){
