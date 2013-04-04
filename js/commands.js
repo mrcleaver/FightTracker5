@@ -407,6 +407,12 @@ DamageCreatureCommand.prototype.execute = function(){
 
 		currentBattle.logMessage(this.creature.toString() + " was dealt: " + this.damage + " damage. " + absorbedString + curHp + " -> " + this.creature.hpcur, this.id);
 		drawCreatureRecords(this.creature); 
+
+		if((curHp / this.creature.hpmax) > 0.5 && (this.creature.hpcur / this.creature.hpmax) <= 0.5){
+			drawEffectShakeCreature(this.creature.id); 
+			currentBattle.logMessage(this.creature.toString() + " was bloodied!");
+		}
+
 		drawUpdateCreatureHp(this.creature.id); 
 	}
 	else{

@@ -286,8 +286,15 @@ function createNewBattle(){
 			return null; 
 		},
 		addCreature: function(creature){
+			var nextInit = this.getNextAvailableInit(creature.init); 
+
+			console.log("Computed next init to be: " + nextInit); 
+
+			creature.init = this.getNextAvailableInit(creature.init); 
+
 			var position = this.getPrevInitId(creature.init); 
 			//Add the creature to the initiative list
+
 			this.initiatives.push(creature); 
 			this.initiatives.sort(sortInitiatives);  									
 			console.log("Drawing creature at position: " + position); 
@@ -296,10 +303,37 @@ function createNewBattle(){
 			drawCreatureRecords(creature); 
 			drawCreatureStatus(creature); 
 		},
+		getNextAvailableInit: function(initiative){
+			//Given an initiative value, returns the next 'best' value for it to take if an identical initiative already exists in the list. 
+			//If two initiatives have the same value, the next available init is just above the existing initiative. 
+			console.log(initiative); 
+			initiative = parseFloat(initiative); 
+			if(isNaN(initiative)){
+				throw "Invalid initiative specified: " + initiative; 
+			}
+			if(this.initiatives.length == 0){
+				return initiative; 
+			}
+			if(this.initiatives.length == 1){
+				return (this.initiatives[0].init == initiative) ? initiative + 0.1 : initiative; 
+			}
+			var existingInitIndex = null; 
+			for(var i = this.initiatives.length - 1; i >= 0; i--){
+				if(this.initiatives[i].init == initiative){
+					existingInitIndex = i; 
+					break; 
+				}
+			}
+			if(existingInitIndex == null) return initiative; 
+
+			if(existingInitIndex == 0) return initiative + 0.1; 
+
+			return (this.initiatives[existingInitIndex-1].init - this.initiatives[existingInitIndex].init) / 2 + initiative; 
+		},
 		//Given an initiative value, returns the ID of creature immediately before this initiative score. 
 		//Returns null if no creatures before this initiative score 
 		getPrevInitId: function(initiative){ 
-			initiative = parseInt(initiative); 
+			initiative = parseFloat(initiative); 
 			if(isNaN(initiative)){
 				throw "Invalid initiative specified"; 
 			}
@@ -310,7 +344,7 @@ function createNewBattle(){
 			if(this.initiatives.length == 1){
 				return (this.initiatives[0].init > initiative && this.initiatives[0].status != CREATURE_STATUS.DELETED) ? this.initiatives[0].id : null; 
 			} 
-			for(var i = this.initiatives.length - 1; i >= 0; i--){
+			for(var i = this.initiatives.length - 1; i >= 0; i--){; 
 				if(this.initiatives[i].init >= initiative && this.initiatives[i].status != CREATURE_STATUS.DELETED){
 					return this.initiatives[i].id; 
 				}

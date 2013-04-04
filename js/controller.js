@@ -47,7 +47,79 @@ $(document).ready(function(){
 	$("#create-creature").click(controllerCreateCreature); 
 	$("#undo").click(undoCommand); 
 	$("#redo").click(redoCommand); 	
+	$("#fightcontainer").sortable({items: "> div.creature",
+									handle: "> div.creature-name",
+									stop: initMove});
+	bindGlobalEvents(); 
 });
+
+var zheld = false; 
+
+function bindGlobalEvents(){
+	$(document).on("keydown", function(event){
+		if(event.which == 90){
+			zheld = true; 
+		}
+		if(event.which == 40 && zheld == true){
+			event.preventDefault(); 
+			return; 
+		}
+		if(event.which == 38 && zheld == true){
+			event.preventDefault(); 
+			return; 
+		}
+		if(event.which == 39 && zheld == true){
+			event.preventDefault(); 
+			return; 
+		}
+	});
+
+	$(document).on("keyup", function(event){
+		if(event.which == 90){
+			zheld = false; 
+		}
+		if(event.which == 40 && zheld == true){
+			controllerCursorNext(); 
+			event.preventDefault(); 
+			return false; 
+		}
+		if(event.which == 38 && zheld == true){
+			controllerCursorPrev(); 
+			event.preventDefault(); 
+			return false; 
+		}
+		if(event.which == 39 && zheld == true){
+			controllerSetStatus(currentBattle.cursor.id, CREATURE_STATUS.DELAYING); 
+			event.preventDefault(); 
+			return false; 
+		}
+		if(event.which == 39 && zheld == true){
+			controllerSetStatus(currentBattle.cursor.id, CREATURE_STATUS.ACTIVE); 
+			event.preventDefault(); 
+			return false; 
+		}
+	})	
+
+	$("#control-creature-name-input, #control-creature-hp-input").on("keypress", function(event){
+		if(event.which == 13){
+			controllerCreateCreature();
+			$("#control-creature-name-input").focus();
+			$("#control-creature-name-input").select();
+			event.preventDefault(); 
+		}
+	});
+
+	$("#control-creature-initiative-input").on("keypress", function(event){
+		if(event.which == 13){
+			controllerCreateCreature();
+			$("#control-creature-initiative-input").focus();
+			$("#control-creature-initiative-input").select();
+			event.preventDefault();	
+		}
+	})
+
+
+}
 
 function bindEventsForCreature(id){
 	var byId = "#"+id; 
@@ -154,12 +226,58 @@ function getEffectFromString(effectString){
 	return {name: effectName, type: effectType};
 }
 
+function animatedScroll(position){
+	$('body').animate({
+	    scrollTop: position
+	 }, 300);
+}
+
+function controllerCursorPrev(){
+	var cursor = currentBattle.cursorPrev(); 
+	if(cursor != null){
+		$("div.active").removeClass("active"); 
+		$("#"+cursor.id).addClass("active"); 
+		var pixel = $("#"+cursor.id).offset().top - $("#"+cursor.id).height() * 2 - 12; 
+		animatedScroll(pixel);
+	}else{
+		$("div.active").removeClass("active"); d
+	}
+}
+
+function controllerCursorNext(){
+	var cursor = currentBattle.cursorNext(); 
+	if(cursor != null){
+		$("div.active").removeClass("active"); 
+		$("#"+cursor.id).addClass("active");
+		var pixel = $("#"+cursor.id).offset().top - $("#"+cursor.id).height() * 2 -12; 
+		animatedScroll(pixel);
+	}else{
+		$("div.active").removeClass("active"); 
+	}
+}
+
 function controllerSetStatus(creatureId, status){
 	var creature = currentBattle.getCreature(creatureId); 
+
+	if(creature.status == status){
+		return; 
+	}
+
+	if(this.currentBattle.cursor != null && this.currentBattle.cursor.id == creatureId && status == CREATURE_STATUS.DELAYING){
+		controllerCursorNext(); 
+	}
+
 	if(creature.status != status){
 		var command = new SetCreatureStatusCommand(currentBattle.getCreature(creatureId), status); 
 		executeCommand(command);
 	} 
+
+	if(this.currentBattle.cursor != null && status == CREATURE_STATUS.ACTIVE){
+		//Calculate a new initiative, as this creature is dropping out. 
+		var init = currentBattle.getNextAvailableInit(this.currentBattle.cursor.init);
+		controllerSetCreatureInit(creature.id, init);
+		drawEffectBounceCreature(creatureId); 
+	}	
 }
 
 function controllerDeleteEffect(creatureId, effectId){
@@ -185,8 +303,34 @@ function controllerDeleteCreature(event, id){
 	} 
 }
 
+function initMove(event, ui){
+	var prevCreatureId = $(ui.item).prevAll(".creature:not(.delaying):first").attr("id");
+	var nextCreatureId = $(ui.item).nextAll(".creature:not(.delaying):first").attr("id");
+
+	var prevCreature = (prevCreatureId == undefined) ? null : currentBattle.getCreature(prevCreatureId); 
+	var nextCreature = (nextCreatureId == undefined) ? null : currentBattle.getCreature(nextCreatureId); 
+
+	//Both creatures have appropriate initiative scores.
+	//The new initiative score for this creature is the difference between the two creatures  
+	var newInit = null;
+	if(prevCreature == null && nextCreature == null){
+		return; 
+	} 
+
+	if(prevCreature != null && nextCreature != null){
+		newInit = (prevCreature.init - nextCreature.init) / 2 + nextCreature.init; 
+	}else if(nextCreature == null){
+		newInit = prevCreature.init - 1; 
+	}else if(prevCreature == null){
+		newInit = nextCreature.init + 1; 
+	}
+
+	controllerSetCreatureInit($(ui.item).attr("id"), newInit); 
+
+}
+
 function controllerSetCreatureInit(id, init){
-	var init = parseInt(init); 
+	var init = parseFloat(init); 
 	if(!isNaN(init)){
 		var command = new SetCreatureInitCommand(currentBattle.getCreature(id), init); 
 		executeCommand(command); 
