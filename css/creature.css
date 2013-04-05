@@ -1,3 +1,7 @@
+div.creature.ui-sortable-helper{
+	width: 100%;
+}
+
 div.creature{
 	width: 500px;
 	height: 100px;
@@ -5,6 +9,7 @@ div.creature{
 	margin-right: auto; 
 	margin-bottom: 20px;
 	border: 1px solid #646464;
+	background-color: #2a333c;
 	position: relative;
 	font-size: 11px;
 	padding: 5px;
@@ -12,7 +17,7 @@ div.creature{
 }
 
 div.creature.active{
-	border: 1px solid rgb(146, 117, 99);	
+	border: 1px solid rgb(227, 107, 35);	
 }
 
 div.creature.inactive{
@@ -24,7 +29,7 @@ div.creature.inactive{
 }
 
 div.creature.delaying{
-	opacity: 0.7;
+	opacity: 0.5;
 }
 
 div.creature div.stat-top{
@@ -47,15 +52,22 @@ div.creature div.creature-close{
 div.creature div.creature-delay{
 	width: 25px; 
 	height: 25px; 
-	top: -15px;
+	top: -13px;
 	left: 185px; 
 }
 
-div.creature div.creature-inactivate{
+div.creature div.creature-resume{
 	width: 25px; 
 	height: 25px; 
-	top: -15px;
+	top: -13px;
 	left: 200px; 
+}
+
+div.creature div.creature-upkeep{
+	width: 25px;
+	height: 25px;
+	top: -13px; 
+	left: 225px;
 }
 
 div.creature div.clear{
@@ -64,6 +76,16 @@ div.creature div.clear{
 
 div.creature.active div.creature-name{
 	background-color: #E36b23;
+}
+
+div.creature div.creature-name input{
+	font-size: 12px; 
+	background-color: transparent; 
+	font-family: 'Ubuntu'; 
+    color: #ece9d7;
+    border: 0px;
+    text-align: center;
+    outline: none;
 }
 
 div.creature div.creature-name{
@@ -122,11 +144,24 @@ div.creature .hp-slash{
 	left: 95px; 
 }
 
+div.creature .hp-max input{
+	font-size: 9px; 
+	background-color: transparent; 
+	font-family: verdana; 
+	width: 60px; 
+	font-weight: normal; 
+    color: #ece9d7;
+    border: 0px;
+    text-align: center;
+    padding-top: 1px;	
+}
+
 div.creature .hp-max{
 	position: absolute;
 	top: 77px; 
 	left: 11px;
 	font-size: 11px;
+	height: 14px;
 }
 
 div.creature .hp-percent{
@@ -202,11 +237,23 @@ div.creature-effects-wrapper ul li{
 	width: 70px;	
 }
 
+div.creature-effects-wrapper ul li input{
+	font-size: 9px; 
+	background-color: transparent; 
+	font-family: verdana; 
+	width: 60px; 
+	font-weight: normal; 
+    color: #ece9d7;
+    border: 0px;
+    text-align: center;
+}
+
 div.creature-effects-wrapper ul li span.label{
 	font-size: 9px;
 	font-family: verdana;
 	text-align: center;
 	width: 60px;
+	height: 14px;
 	overflow: hidden;
 	padding: 1px 2px;
 	font-weight: normal;
