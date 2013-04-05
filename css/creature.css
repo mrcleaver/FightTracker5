@@ -63,11 +63,11 @@ div.creature div.creature-resume{
 	left: 200px; 
 }
 
-div.creature div.creature-move{
+div.creature div.creature-upkeep{
 	width: 25px;
 	height: 25px;
 	top: -13px; 
-	left: 480px;
+	left: 225px;
 }
 
 div.creature div.clear{

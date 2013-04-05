@@ -13,7 +13,8 @@
 		<script src="js/fight5.js"></script>
 		<script src="js/commands.js"></script>	
 		<script src="js/drawView.js"></script>
-		<script src="js/controller.js"></script>	
+		<script src="js/controller.js"></script>
+		<script src="lib/jquery.simplemodal.1.4.4.min.js"></script>	
 		<title>FightTracker Version 5</title>
 	</head>
 	<body>
@@ -49,6 +50,7 @@
 				<div class="creature-init stat-top">99</div>
 				<div class="creature-delay stat-top clear clickable"><i class="icon-pause icon-white"></i></div>
 				<div class="creature-resume stat-top clear clickable"><i class="icon-play icon-white"></i></div>
+				<div class="creature-upkeep stat-top clear clickable"><i class="icon-repeat icon-white"></i></div>				
 				<div class="creature-close stat-top clear clickable"><i class="icon-remove-circle icon-white"></i></div>
 				<div class="creature-left">
 					<div class="hp-cur">
@@ -97,5 +99,49 @@
 			</fieldset>
 		</div>
 		<div class="controls-bottom-spacer"></div>
+		<div id="keyboard-dialog" class="nodisplay">
+			<table class="table table-bordered table-striped">
+				<caption>Shortcuts and tips</caption>
+				<tr>
+					<th>Shortcut</th>
+					<th>Effect</th>
+				</tr>
+				<tr>
+					<td>] and [</td>
+					<td>Advance initiative cursor</td>
+				</tr>
+				<tr>
+					<td> \ </td>
+					<td>Delay creature on cursor</td>
+				</tr>
+				<tr>
+					<td> ; </td>
+					<td>Trigger creature upkeep on cursor</td>
+				</tr>
+				<tr>
+					<td>Ctrl + LClick on effect</td>
+					<td>Delete an effect from creature</td>
+				</tr>
+				<tr colspan="2">
+					<th>While on 'Effect or value' input box</th>
+				</tr>
+				<tr>
+					<td>'-' or '+' followed by {effectname} then enter </td>
+					<td>Create a neg. or pos. effect on creature</td>
+				</tr>
+				<tr>
+					<td>'-' or '+' followed by {number} then enter</td>
+					<td>Add or subtract hp from creature</td>
+				</tr>
+				<tr>
+					<td>{effectname} then enter</td>
+					<td>Create a neutral effect</td>
+				</tr>
+				<tr>
+					<td>{number} then enter</td>
+					<td>Subtract hp from creature</td>
+				</tr>
+			</table>
+		</div>
 	</body>
 </html>

@@ -18,6 +18,8 @@ RECORD_TYPE = {
 	AP: "AP"
 }
 
+var help = false; 
+
 function executeCommand(command){
 	command.execute(); 
 	currentBattle.history.push(command); 
@@ -50,6 +52,9 @@ $(document).ready(function(){
 	$("#fightcontainer").sortable({items: "> div.creature",
 									handle: "> div.creature-name",
 									stop: initMove});
+	$("#keyboard-dialog").dialog({
+      autoOpen: false
+	});
 	bindGlobalEvents(); 
 });
 
@@ -57,46 +62,72 @@ var zheld = false;
 
 function bindGlobalEvents(){
 	$(document).on("keydown", function(event){
-		if(event.which == 90){
-			zheld = true; 
-		}
-		if(event.which == 40 && zheld == true){
+		/* The [ and ] keys move initiative */
+		if(event.which == 221){
 			event.preventDefault(); 
-			return; 
+			return false; 
 		}
-		if(event.which == 38 && zheld == true){
+		if(event.which == 219){
 			event.preventDefault(); 
-			return; 
-		}
-		if(event.which == 39 && zheld == true){
+			return false; 
+		}		
+
+		/* The \ key delays a creature */
+		if(event.which == 220 && currentBattle.cursor != null){
 			event.preventDefault(); 
-			return; 
+			return false; 
 		}
+
+		/*The ; key triggers upkeep*/
+		if(event.which == 186 && currentBattle.cursor != null){
+			event.preventDefault(); 
+			return false; 	
+		}	
+
 	});
 
 	$(document).on("keyup", function(event){
-		if(event.which == 90){
-			zheld = false; 
+		if(event.which == 9 && currentBattle.cursor != null){
+			//Tab to this creature's input
+			$("#"+currentBattle.cursor.id + " .caw-input").focus(); 
+			$("#"+currentBattle.cursor.id + " .caw-input").select(); 
+			event.preventDefault(); 
 		}
-		if(event.which == 40 && zheld == true){
+
+		/* The [ and ] keys move initiative */
+		if(event.which == 221){
 			controllerCursorNext(); 
 			event.preventDefault(); 
 			return false; 
 		}
-		if(event.which == 38 && zheld == true){
+		if(event.which == 219){
 			controllerCursorPrev(); 
 			event.preventDefault(); 
 			return false; 
 		}
-		if(event.which == 39 && zheld == true){
+
+		/* The \ key delays a creature */
+		if(event.which == 220 && currentBattle.cursor != null){
 			controllerSetStatus(currentBattle.cursor.id, CREATURE_STATUS.DELAYING); 
 			event.preventDefault(); 
 			return false; 
 		}
-		if(event.which == 39 && zheld == true){
-			controllerSetStatus(currentBattle.cursor.id, CREATURE_STATUS.ACTIVE); 
+
+		/*The ; key triggers upkeep*/
+		if(event.which == 186 && currentBattle.cursor != null){
+			controllerUpkeep(currentBattle.cursor.id); 
 			event.preventDefault(); 
-			return false; 
+			return false; 	
+		}
+
+		if(event.which == 191){
+			 if(!help){
+				$("#keyboard-dialog").modal({persist:true});
+				help = true; 
+			} else{
+				$.modal.close();
+				help = false; 
+			}
 		}
 	})	
 
@@ -106,8 +137,18 @@ function bindGlobalEvents(){
 			$("#control-creature-name-input").focus();
 			$("#control-creature-name-input").select();
 			event.preventDefault(); 
+			return; 
 		}
 	});
+
+	$("#control-creature-hp-input").on("keydown", function(event){
+		if(event.which == 9){
+			$("#control-creature-name-input").focus(); 
+			$("#control-creature-name-input").select(); 
+			event.preventDefault(); 
+			return; 
+		}
+	})
 
 	$("#control-creature-initiative-input").on("keypress", function(event){
 		if(event.which == 13){
@@ -123,6 +164,19 @@ function bindGlobalEvents(){
 
 function bindEventsForCreature(id){
 	var byId = "#"+id; 
+
+	$(byId + " .caw-input").on("focus", function(){
+		$(byId + " .caw-input").select(); 
+	});
+
+	$(byId + " .caw-input").on("keypress", function(event){
+		if(event.which == 13){
+			controllerActionInputParse(this, id); 
+			event.preventDefault(); 
+			return; 
+		}
+	});
+
 	$(byId +" .caw-pos").on("click", function(){
 		controllerAddEffect(this, EFFECT_TYPE.POSITIVE, id); 
 	}); 
@@ -178,6 +232,10 @@ function bindEventsForCreature(id){
 	$(byId + " div.creature-resume").on("click", function(){
 		controllerSetStatus(id, CREATURE_STATUS.ACTIVE); 
 	});	
+
+	$(byId + " div.creature-upkeep").on("click", function(){
+		controllerUpkeep(id); 
+	});
 
 	$(byId + " ul.creature-effects").find("li>span").editable(function(value, settings){
 		var effectId = $(this).attr("id"); 
@@ -253,6 +311,23 @@ function controllerCursorNext(){
 		animatedScroll(pixel);
 	}else{
 		$("div.active").removeClass("active"); 
+	}
+}
+
+function controllerUpkeep(creatureId){
+	var creature = currentBattle.getCreature(creatureId); 
+
+	//First deal ongoing damage. 
+	var ongoing = creature.ongoing; 
+	if(ongoing > 0){
+		currentBattle.logMessage(creature.toString() + " is taking: " + ongoing + " ongoing damage.", "Controller"); 
+		changeHp(ongoing, true, creatureId); 
+	}
+	if(creature.hpcur <= 0 && creature.regen > 0){
+		currentBattle.logMessage(creature.toString() + " cannot regenerate hp because it is dying", "Controller"); 
+	}else if(creature.regen > 0){
+		currentBattle.logMessage(creature.toString() + " regenerating: " + creature.regen + " hp", "Controller"); 
+		changeHp(creature.regen, false, creatureId); 
 	}
 }
 
@@ -420,8 +495,7 @@ function controllerCreateCreature(){
 	executeCommand(command); 
 }
 
-function controllerChangeHp(event, subtraction, id){
-	var val = parseInt($("#"+id + " input.caw-input").val()); 
+function changeHp(val, subtraction, id){
 	var damageCreature = subtraction; 
 	if(!isNaN(val)){
 		if(val < 0 && !subtraction){
@@ -438,8 +512,42 @@ function controllerChangeHp(event, subtraction, id){
 			command = new HealCreatureCommand(currentBattle.getCreature(id), val); 
 		}
 		executeCommand(command); 
+	}	
+}
+
+function controllerActionInputParse(event, id){
+	var val = $("#"+id + " input.caw-input").val();
+
+	var isHp = /^[+-]?[0-9]*[0-9]$/.test(val);
+
+	if(isHp){
+		var sign = val.substr(0,1); 
+
+		switch(sign){
+			case '+':
+				changeHp(parseInt(val), false, id); 
+				break; 
+			case '-':
+				changeHp(parseInt(val), false, id);
+				break; 
+			default:
+				changeHp(parseInt(val), true, id);  
+		}
+	}else{
+		//var isEffect = /[A-Za-z-$]/.test(val); 
+		var newEffectName; 
+		var e = getEffectFromString(val); 
+		controllerAddEffect(null, e.type, id, e.name); 	
 	}
 }
+
+
+
+function controllerChangeHp(event, subtraction, id){
+	var val = parseInt($("#"+id + " input.caw-input").val()); 
+	changeHp(val, subtraction, id); 
+}
+
 
 function controllerAddEffect(event, effectType, id, value){
 	var effectName = (value == undefined) ? $("#"+id +" input.caw-input").val() : value; 
