@@ -6,6 +6,17 @@ function drawEffectShakeCreature(id){
 	$("#"+id).effect("shake"); 
 }
 
+function drawCursor(cursor){
+	if(cursor != null){
+		$("div.active").removeClass("active"); 
+		$("#"+cursor.id).addClass("active"); 
+		var pixel = $("#"+cursor.id).offset().top - $("#"+cursor.id).height() * 2 - 12; 
+		animatedScroll(pixel); 
+	}else{
+		$("div.active").removeClass("active"); 
+	} 
+}
+
 function drawCreatureRecords(creature){
 	var byId = "#"+creature.id; 
 	var temp = $(byId+ " .creature-temp-hp"); 
@@ -89,6 +100,23 @@ function drawUpdateCreatureHp(id){
 	stats.find("span.hp-percent").text(percent);
 }
 
+function drawCreatureAfter(creature){
+	var prototype = $("#creature-prototype").clone(); 
+	prototype.attr("id", creature.id).removeClass("nodisplay"); 
+	var innerCreature = prototype.find(".creature-left");
+	
+	prototype.find(".creature-name").text(creature.name); 
+	prototype.find(".creature-init").text(parseInt(creature.init)); 
+	innerCreature.find("span.hp-cur").text(creature.hpcur); 
+	innerCreature.find("span.hp-max").text(creature.hpmax); 
+	innerCreature.find("span.hp-percent").text(((creature.hpcur / creature.hpmax) * 100).toPrecision(4));
+	
+	prototype.appendTo("#fightcontainer"); 
+	drawCreatureEffects(creature); 
+	drawCreatureStatus(creature); 
+	drawCreatureRecords(creature); 
+}
+
 function redrawCreature(creature, newAfterPosition){
 	var creatureDom = $("#"+creature.id); 
 	creatureDom.fadeOut(function(){ 
@@ -101,7 +129,6 @@ function redrawCreature(creature, newAfterPosition){
 		creatureDom.find(".creature-init").text(parseInt(creature.init)); 
 		creatureDom.fadeIn();		
 	});
-
 }
 
 function drawCreature(creature, afterPosition){
@@ -120,11 +147,14 @@ function drawCreature(creature, afterPosition){
 	}else{
 		prototype.prependTo("#fightcontainer"); 
 	}
-
 }
 
 function drawDeleteCreature(creature){
 	$("#"+creature.id).fadeOut(function(){
 		$("#"+creature.id).remove(); 
 	}); 
+}
+
+function drawResetBattle(){
+	$(".creature:not(#creature-prototype)").remove(); 
 }

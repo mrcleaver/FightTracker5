@@ -9,15 +9,57 @@ function testCreateCreature(name, init, hp){
 }
 
 /*Helper functions*/
-function s4() {
-  return Math.floor((1 + Math.random()) * 0x10000)
-             .toString(16)
-             .substring(1);
-};
+// LZW-compress a string
+function lzw_encode(s) {
+    var dict = {};
+    var data = (s + "").split("");
+    var out = [];
+    var currChar;
+    var phrase = data[0];
+    var code = 256;
+    for (var i=1; i<data.length; i++) {
+        currChar=data[i];
+        if (dict[phrase + currChar] != null) {
+            phrase += currChar;
+        }
+        else {
+            out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+            dict[phrase + currChar] = code;
+            code++;
+            phrase=currChar;
+        }
+    }
+    out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+    for (var i=0; i<out.length; i++) {
+        out[i] = String.fromCharCode(out[i]);
+    }
+    return out.join("");
+}
 
-function guid() {
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-         s4() + '-' + s4() + s4() + s4();
+// Decompress an LZW-encoded string
+function lzw_decode(s) {
+    var dict = {};
+    var data = (s + "").split("");
+    var currChar = data[0];
+    var oldPhrase = currChar;
+    var out = [currChar];
+    var code = 256;
+    var phrase;
+    for (var i=1; i<data.length; i++) {
+        var currCode = data[i].charCodeAt(0);
+        if (currCode < 256) {
+            phrase = data[i];
+        }
+        else {
+           phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+        }
+        out.push(phrase);
+        currChar = phrase.charAt(0);
+        dict[code] = oldPhrase + currChar;
+        code++;
+        oldPhrase = phrase;
+    }
+    return out.join("");
 }
 
 function genMonsterId() {
@@ -178,9 +220,46 @@ DLinkedList.prototype.remove = function(node){
 	return node; 
 }
 /* End helper functions */
+function loadBattle(battleData){
+	var battle = createNewBattle(); 
+	var initiatives = []; 
+	for(var i = 0; i < battleData.initiatives.length; i++){
+		var c = new Creature("",0,0); 
+		c.fromData(battleData.initiatives[i]); 
+		initiatives[i] = c;
+		battle.creatures[c.id] = c; 
+		if(battleData.cursorId == c.id){
+			battle.cursor = c; 
+		}
+	}	
+	battle.id = battleData.id; 
+	battle.turn = battleData.turn; 
+	battle.initiatives = initiatives; 
+	battle.messages = battleData.messages; 
+	battle.names = battleData.names;
+	return battle; 
+}
+
+function battleToData(battle){
+	var inits = []; 
+
+	for(var i = 0; i < battle.initiatives.length; i++){
+		var c = battle.initiatives[i].toData(); 
+		inits[i] = c; 
+	}
+
+	return {
+		id: battle.id, 
+		turn: battle.turn, 
+		initiatives: inits,
+		messages: battle.messages,
+		cursorId: (battle.cursor == null) ? null : battle.cursor.id ,
+		names: battle.names
+	}
+}
 
 function createNewBattle(){
-	var _id = guid(); 
+	var _id = genMonsterId(); 
 	return {
 		id: _id,
 		turn: 0, 
@@ -291,7 +370,6 @@ function createNewBattle(){
 
 			this.initiatives.push(creature); 
 			this.initiatives.sort(sortInitiatives);  									
-			console.log("Drawing creature at position: " + position); 
 			drawCreature(creature, position); 
 			drawCreatureEffects(creature); 
 			drawCreatureRecords(creature); 
@@ -382,9 +460,54 @@ Creature.prototype.toString = function(){
 	return "[" + this.id + "]" + this.name; 
 }
 
+Creature.prototype.fromData = function(data){
+	var effectsList = new DLinkedList(); 
+	for(var i = 0; i < data.effects.length; i++){
+		var node = new Node(data.effects[i]); 
+		effectsList.insertEnd(node); 
+		this.effectsHash[data.effects[i].id] = node; 
+	}
+	this.id = data.id; 
+	this.name = data.name; 
+	this.init = data.init; 
+	this.initStart = data.initStart; 
+	this.hpcur = data.hpcur; 
+	this.hpmax = data.hpmax; 
+	this.temp = data.temp; 
+	this.ongoing = data.ongoing; 
+	this.regen = data.regen; 
+	this.ap = data.ap; 
+	this.effects = effectsList; 
+	this.status = data.status; 
+}
+
+Creature.prototype.toData = function(){
+	var effectsArray = []; 
+	var it = this.effects.iterator(); 
+
+	while(it.hasNext()){
+		var node = it.next(); 
+		effectsArray.push(node.data); 
+	}
+	return {
+		id: this.id, 
+		name: this.name, 
+		init: this.init,
+		initStart: this.initStart, 
+		hpcur: this.hpcur, 
+		hpmax: this.hpmax, 
+		temp: this.temp, 
+		ongoing: this.ongoing,
+		regen: this.regen, 
+		ap: this.ap, 
+		effects: effectsArray, 
+		status: this.status
+	}
+}
 
 function createCreature(name, init, hp){
 	return new Creature(name, init, hp); 	
 }
 
 var currentBattle; 
+var previousBattle; 

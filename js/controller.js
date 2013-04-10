@@ -20,6 +20,8 @@ RECORD_TYPE = {
 
 var help = false; 
 
+
+
 function executeCommand(command){
 	command.execute(); 
 	currentBattle.history.push(command); 
@@ -45,6 +47,7 @@ function redoCommand(){
 //Do initial setup here
 $(document).ready(function(){
 	currentBattle = createNewBattle(); 
+
 	//Bind keys
 	$("#create-creature").click(controllerCreateCreature); 
 	$("#undo").click(undoCommand); 
@@ -56,6 +59,12 @@ $(document).ready(function(){
       autoOpen: false
 	});
 	bindGlobalEvents(); 
+
+	setInterval(function(){
+		if(currentBattle.history.length >= 1){
+			controllerSaveBattle(currentBattle); 			
+		}
+	}, 60000);
 });
 
 var zheld = false; 
@@ -172,6 +181,8 @@ function bindEventsForCreature(id){
 	$(byId + " .caw-input").on("keypress", function(event){
 		if(event.which == 13){
 			controllerActionInputParse(this, id); 
+			$(byId + " .caw-input").focus(); 
+			$(byId + " .caw-input").select(); 
 			event.preventDefault(); 
 			return; 
 		}
@@ -252,7 +263,7 @@ function bindEventsForCreature(id){
 
 	$(byId + " ul.creature-effects").find("li>span").bind("click", function(e){
 		var effectId = $(this).attr("id"); 
-		if(e.metaKey){
+		if(e.metaKey || e.shiftKey){
 			var effectId = $(this).attr("id");
 			if(effectId != undefined){
 				controllerDeleteEffect(id, effectId);
@@ -292,26 +303,12 @@ function animatedScroll(position){
 
 function controllerCursorPrev(){
 	var cursor = currentBattle.cursorPrev(); 
-	if(cursor != null){
-		$("div.active").removeClass("active"); 
-		$("#"+cursor.id).addClass("active"); 
-		var pixel = $("#"+cursor.id).offset().top - $("#"+cursor.id).height() * 2 - 12; 
-		animatedScroll(pixel);
-	}else{
-		$("div.active").removeClass("active"); d
-	}
+	drawCursor(cursor); 
 }
 
 function controllerCursorNext(){
 	var cursor = currentBattle.cursorNext(); 
-	if(cursor != null){
-		$("div.active").removeClass("active"); 
-		$("#"+cursor.id).addClass("active");
-		var pixel = $("#"+cursor.id).offset().top - $("#"+cursor.id).height() * 2 -12; 
-		animatedScroll(pixel);
-	}else{
-		$("div.active").removeClass("active"); 
-	}
+	drawCursor(cursor); 
 }
 
 function controllerUpkeep(creatureId){
@@ -556,4 +553,44 @@ function controllerAddEffect(event, effectType, id, value){
 	}
 	var command = new AddEffectCommand(effectName, effectType, id); 
 	executeCommand(command);  
+}
+
+function controllerSaveBattle(battle){
+	var b = JSON.stringify(battleToData(battle)); 
+	var compressedB = lzw_encode(b);
+	localStorage[battle.id] = compressedB; 
+	currentBattle.logMessage("Battle: " + battle.id + " saved.", "Controller");
+	return compressedB;  
+}
+
+function controllerListBattles(){
+	for(var i in localStorage){
+		console.log(i); 
+	}
+}
+
+function controllerLoadBattleById(battleId){
+	var b = localStorage[battleId]; 
+	var battleData; 
+	if(b != undefined){
+		battleData = JSON.parse(lzw_decode(b));
+		var battle = loadBattle(battleData); 
+		controllerLoadBattle(battle); 
+	}
+}
+
+function controllerLoadBattle(battle){
+	drawResetBattle(); 
+	currentBattle = battle; 
+	for(var i = 0; i < currentBattle.initiatives.length; i++){
+		drawCreatureAfter(currentBattle.initiatives[i]); 
+		bindEventsForCreature(currentBattle.initiatives[i].id); 
+	}
+	drawCursor(currentBattle.cursor);
+	console.log("Loaded battle: " + currentBattle.id);	
+}
+
+function controllerNewBattle(){
+	currentBattle = createNewBattle(); 
+	drawResetBattle(); 
 }
