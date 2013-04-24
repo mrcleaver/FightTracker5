@@ -220,6 +220,8 @@ DLinkedList.prototype.remove = function(node){
 	return node; 
 }
 /* End helper functions */
+
+/* Regenerates a battle from stringified battledata */
 function loadBattle(battleData){
 	var battle = createNewBattle(); 
 	var initiatives = []; 
@@ -240,6 +242,7 @@ function loadBattle(battleData){
 	return battle; 
 }
 
+/* Converts a battle object into a string representation that can be regenerated */
 function battleToData(battle){
 	var inits = []; 
 

@@ -558,23 +558,38 @@ function controllerAddEffect(event, effectType, id, value){
 function controllerSaveBattle(battle){
 	var b = JSON.stringify(battleToData(battle)); 
 	var compressedB = lzw_encode(b);
-	localStorage[battle.id] = compressedB; 
+
+	var saveFile = {
+		battleDataStringCompressed: compressedB,
+		date: new Date().getTime()
+	}
+
+	localStorage[battle.id] = JSON.stringify(saveFile); 
 	currentBattle.logMessage("Battle: " + battle.id + " saved.", "Controller");
 	return compressedB;  
 }
 
+function saveToObj(saveJSON){
+	var saveFile = JSON.parse(saveJSON); 
+	var parsedDate = saveFile.date; 
+	var parsedBattle = JSON.parse(lzw_decode(saveFile.battleDataStringCompressed)); 
+	return {
+		battleDataString: parsedBattle, 
+		date: parsedDate 
+	}
+}
+
 function controllerListBattles(){
-	for(var i in localStorage){
-		console.log(i); 
+	for(var save in localStorage){
+		var o = saveToObj(localStorage[save]); 	
+		console.log(o.battleDataString.id + " [" + new Date(o.date).toUTCString() + "]"); 
 	}
 }
 
 function controllerLoadBattleById(battleId){
-	var b = localStorage[battleId]; 
-	var battleData; 
+	var b = saveToObj(localStorage[battleId]).battleDataString; 
 	if(b != undefined){
-		battleData = JSON.parse(lzw_decode(b));
-		var battle = loadBattle(battleData); 
+		var battle = loadBattle(b); 
 		controllerLoadBattle(battle); 
 	}
 }
