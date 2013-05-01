@@ -279,7 +279,7 @@ function createNewBattle(){
 				return null; 
 			}
 			if(this.cursor == null){
-				if(this.initiatives[0].status == CREATURE_STATUS.ACTIVE){
+				if(this.initiatives[0].status == CREATURE_STATUS.ACTIVE || (this.initiatives[0].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 					this.cursor = this.initiatives[0]; 
 					return this.cursor;
 				}else{
@@ -295,14 +295,14 @@ function createNewBattle(){
 				}
 			}
 			for(var i = (cursorPosition + 1) % this.initiatives.length; i != cursorPosition;){
-				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE || (this.initiatives[i].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 					this.cursor = this.initiatives[i]; 
 					return this.cursor; 
 				}
 
 				i = (i + 1) % this.initiatives.length; 
 				if(i == cursorPosition){
-					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE || (this.initiatives[i].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 						this.cursor = this.initiatives[i]; 
 						return this.cursor; 
 					}else{
@@ -320,7 +320,7 @@ function createNewBattle(){
 				return null; 
 			}
 			if(this.cursor == null){
-				if(this.initiatives[this.initiatives.length-1].status == CREATURE_STATUS.ACTIVE){
+				if(this.initiatives[this.initiatives.length-1].status == CREATURE_STATUS.ACTIVE || (this.initiatives[this.initiatives.length-1].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 					this.cursor = this.initiatives[this.initiatives.length-1]; 
 					return this.cursor;
 				}else{
@@ -337,14 +337,14 @@ function createNewBattle(){
 			}
 			//Go backwards to find the previous cursor position. 
 			for(var i = (cursorPosition + this.initiatives.length -1) % this.initiatives.length; i != cursorPosition;){
-				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+				if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE || (this.initiatives[i].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 					this.cursor = this.initiatives[i]; 
 					return this.cursor; 
 				}
 
 				i = (i + this.initiatives.length - 1) % this.initiatives.length; 
 				if(i == cursorPosition){
-					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE){
+					if(this.initiatives[i].status == CREATURE_STATUS.ACTIVE || (this.initiatives[i].status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_SELECT_DELAYING)){
 						this.cursor = this.initiatives[i]; 
 						return this.cursor; 
 					}else{

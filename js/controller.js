@@ -20,6 +20,14 @@ RECORD_TYPE = {
 
 var help = false; 
 
+var APP_SETTINGS = {
+	CURSOR_SELECT_DELAYING: true,
+	CURSOR_NEXT_ON_DELAY: false,
+	CURSOR_AUTO_UPKEEP: false,
+	ENABLE_AUTOSAVE: true,
+	AUTOSAVE_INTERVAL: 60000
+}
+
 
 
 function executeCommand(command){
@@ -64,13 +72,24 @@ $(document).ready(function(){
 		if(currentBattle.history.length >= 1){
 			controllerSaveBattle(currentBattle); 			
 		}
-	}, 60000);
+	}, APP_SETTINGS.AUTOSAVE_INTERVAL);
 });
 
 var zheld = false; 
 
+
+/*Focus on the Effect or value combo box of the currently selected creature on cursor*/
+function controllerFocusOnCursor(){
+	$("#"+currentBattle.cursor.id + " .caw-input").focus(); 
+	$("#"+currentBattle.cursor.id + " .caw-input").select(); 
+}
+
 function bindGlobalEvents(){
 	$(document).on("keydown", function(event){
+		if(event.which == 9 && currentBattle.cursor != null && !$("input").is(":focus")){
+			event.preventDefault(); 
+		}
+
 		/* The [ and ] keys move initiative */
 		if(event.which == 221){
 			event.preventDefault(); 
@@ -96,28 +115,28 @@ function bindGlobalEvents(){
 	});
 
 	$(document).on("keyup", function(event){
-		if(event.which == 9 && currentBattle.cursor != null){
-			//Tab to this creature's input
-			$("#"+currentBattle.cursor.id + " .caw-input").focus(); 
-			$("#"+currentBattle.cursor.id + " .caw-input").select(); 
+		if(event.which == 9 && currentBattle.cursor != null && !$("input").is(":focus")){
+			controllerFocusOnCursor()
 			event.preventDefault(); 
 		}
 
-		/* The [ and ] keys move initiative */
+		/* The [ and ] keys move initiative, also defocuses any select boxes */
 		if(event.which == 221){
 			controllerCursorNext(); 
+			controllerFocusOnCursor()
 			event.preventDefault(); 
 			return false; 
 		}
 		if(event.which == 219){
 			controllerCursorPrev(); 
+			controllerFocusOnCursor()
 			event.preventDefault(); 
 			return false; 
 		}
 
 		/* The \ key delays a creature */
 		if(event.which == 220 && currentBattle.cursor != null){
-			controllerSetStatus(currentBattle.cursor.id, CREATURE_STATUS.DELAYING); 
+			controllerToggleDelay(currentBattle.cursor.id); 
 			event.preventDefault(); 
 			return false; 
 		}
@@ -328,6 +347,19 @@ function controllerUpkeep(creatureId){
 	}
 }
 
+/*Helper function for delaying creature. 
+If creature is already delaying, sets the creature to active. If the creature is not delaying, delays the creature.*/
+function controllerToggleDelay(creatureId){
+	var creature = currentBattle.getCreature(creatureId); 
+	if(creature.status == CREATURE_STATUS.DELAYING){
+		//Creature already delaying, undelay the creature. 
+		controllerSetStatus(creatureId, CREATURE_STATUS.ACTIVE); 
+	}else{
+		controllerSetStatus(creatureId, CREATURE_STATUS.DELAYING); 
+	}
+}
+
+/*Sets a creature's status. If the creature is set to delaying, also move the cursor*/
 function controllerSetStatus(creatureId, status){
 	var creature = currentBattle.getCreature(creatureId); 
 
@@ -335,21 +367,26 @@ function controllerSetStatus(creatureId, status){
 		return; 
 	}
 
-	if(this.currentBattle.cursor != null && this.currentBattle.cursor.id == creatureId && status == CREATURE_STATUS.DELAYING){
-		controllerCursorNext(); 
-	}
+	var command = new SetCreatureStatusCommand(currentBattle.getCreature(creatureId), status); 
+	executeCommand(command);
 
-	if(creature.status != status){
-		var command = new SetCreatureStatusCommand(currentBattle.getCreature(creatureId), status); 
-		executeCommand(command);
-	} 
+	if(this.currentBattle.cursor != null && this.currentBattle.cursor.id == creatureId && status == CREATURE_STATUS.DELAYING && APP_SETTINGS.CURSOR_NEXT_ON_DELAY){
+		controllerCursorNext(); 
+	}	
 
 	if(this.currentBattle.cursor != null && status == CREATURE_STATUS.ACTIVE){
-		//Calculate a new initiative, as this creature is dropping out. 
-		var init = currentBattle.getNextAvailableInit(this.currentBattle.cursor.init);
+		var init; 
+		if(currentBattle.cursor == creature){
+			//Retain the old initiative, we're simply toggling this creature's initiative. 
+			init = creature.init; 
+		}else{
+			//Calculate a new initiative, as this creature is dropping out in a new place.  
+			init = currentBattle.getNextAvailableInit(this.currentBattle.cursor.init);
+		}
 		controllerSetCreatureInit(creature.id, init);
 		drawEffectBounceCreature(creatureId); 
 	}	
+	drawCursor(currentBattle.cursor);
 }
 
 function controllerDeleteEffect(creatureId, effectId){
